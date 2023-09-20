@@ -107,9 +107,8 @@ const Stories = () => {
       >
         <div className="flex space-x-4">
           {stories.map((story, index) => (
-            <Link href={"#"}>
+            <Link href={"#"} key={index}>
               <div
-                key={index}
                 className={`w-16 h-16 flex-shrink-0 rounded-full overflow-hidden border-2 ${
                   index === currentIndex
                     ? "border-yellow-400"

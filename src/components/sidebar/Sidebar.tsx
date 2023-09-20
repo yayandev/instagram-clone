@@ -1,3 +1,4 @@
+"use client";
 import Brand from "./Brand";
 import Menu from "./Menu";
 const Sidebar = () => {

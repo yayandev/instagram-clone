@@ -6,7 +6,7 @@ import Sidebar from "@/components/sidebar/Sidebar";
 import Stories from "@/components/stories/Stories";
 import Suggestions from "@/components/suggestions/Suggestions";
 
-export default function Home() {
+async function Home() {
   return (
     <main className="md:flex">
       <NavTop />
@@ -27,3 +27,5 @@ export default function Home() {
     </main>
   );
 }
+
+export default Home;
