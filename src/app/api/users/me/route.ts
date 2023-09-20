@@ -4,45 +4,30 @@ import { getServerSession } from "next-auth";
 
 export async function GET(req: NextRequest) {
   try {
-    const query = req.nextUrl.searchParams;
-    const take = Number(query.get("take")) || 5;
-    const skip = Number(query.get("skip")) || 0;
     const auth: any = await getServerSession();
     if (!auth) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
 
-    const me: any = await prisma.user.findUnique({
+    const me = await prisma.user.findUnique({
       where: {
         email: auth.user.email,
       },
-    });
-
-    const users = await prisma.user.findMany({
-      where: {
-        email: {
-          not: auth.user.email,
-        },
-      },
       select: {
         id: true,
+        username: true,
         name: true,
         image: true,
-        username: true,
-        createdAt: true,
-        updatedAt: true,
         isVerify: true,
         followedByIDs: true,
         followingIDs: true,
+        following: true,
+        followedBy: true,
       },
-      take: take,
-      skip: skip,
     });
 
     return NextResponse.json({
-      data: users,
-      take: take,
-      skip: skip,
+      data: me,
       message: "success",
       success: true,
     });

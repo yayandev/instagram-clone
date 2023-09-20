@@ -79,7 +79,7 @@ const FormLogin = () => {
           onClick={() =>
             signIn("google", {
               redirect: false,
-              callbackUrl: url as string,
+              callbackUrl: callbackUrl,
             })
           }
         >

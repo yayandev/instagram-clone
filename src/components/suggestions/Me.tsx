@@ -8,7 +8,10 @@ const Me = () => {
   if (status === "loading") return <Skeleton />;
   return (
     <div className="w-full flex justify-between gap-3 items-center">
-      <Link href={"#"} className="flex items-center gap-3 ">
+      <Link
+        href={`/u/${session?.user?.username}`}
+        className="flex items-center gap-3 "
+      >
         <Image
           src={`${session?.user?.image}`}
           width={50}
