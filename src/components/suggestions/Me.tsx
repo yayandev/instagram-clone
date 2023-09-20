@@ -17,7 +17,7 @@ const Me = () => {
         </div>
       </Link>
       <div className="">
-        <button className="text-sm text-blue-400 font-semibold">Switch</button>
+        <button className="text-sm text-red-400 font-semibold">Sign out</button>
       </div>
     </div>
   );

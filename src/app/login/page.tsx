@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: "Instagram - Login",
 };
 
-import { FaFacebook } from "react-icons/fa6";
+import { FaGoogle } from "react-icons/fa6";
 
 const PageLogin = () => {
   return (
@@ -36,7 +36,7 @@ const PageLogin = () => {
           </div>
           <div className="w-full flex justify-center items-center my-2">
             <button className="flex justify-center items-center gap-2 text-[#385185] text-sm font-semibold">
-              <FaFacebook /> <span>Log in with Facebook</span>
+              <FaGoogle /> <span>Log in with Google</span>
             </button>
           </div>
           <div className="w-full text-center my-2">

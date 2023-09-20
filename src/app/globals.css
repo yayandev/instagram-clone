@@ -4,7 +4,7 @@
 
 /* percantik scrollbar */
 ::-webkit-scrollbar {
-  width: 4px;
+  width: 5px;
   height: 4px;
 }
 ::-webkit-scrollbar-track {
@@ -14,9 +14,13 @@
   background: #888;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #fafafa;
 }
 
-.scroll-hide {
+/* .scroll-hide {
   overflow: hidden;
+} */
+
+* {
+  box-sizing: border-box;
 }

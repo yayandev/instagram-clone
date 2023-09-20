@@ -5,17 +5,17 @@ export const metadata: Metadata = {
 };
 
 import Head from "./Head";
-import FacebookButtonLogin from "./FacebookButtonLogin";
 import OrRow from "./OrRow";
 import FormSignUp from "./FormSignUp";
 import Footer from "./Footer";
+import GoogleButtonLogin from "./GoogleButtonLogin";
 
 const PageSignup = () => {
   return (
-    <div className="w-full min-h-screen flex justify-center items-center flex-col gap-3">
+    <div className="w-full min-h-screen flex justify-center items-center flex-col gap-3 py-3">
       <div className="sm:w-[350px] px-4 pt-4 sm:border w-full">
         <Head />
-        <FacebookButtonLogin />
+        <GoogleButtonLogin />
         <OrRow />
         <FormSignUp />
       </div>
