@@ -53,3 +53,46 @@ export async function GET(req: NextRequest) {
     });
   }
 }
+
+export async function PUT(req: NextRequest) {
+  try {
+    const auth: any = await getServerSession();
+
+    if (!auth) {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
+
+    const body = await req.json();
+
+    const { name, username, email, bio } = body;
+
+    if (!name || !username || !email || !bio) {
+      return NextResponse.json({
+        message: "All fields are required",
+        success: false,
+      });
+    }
+
+    const user = await prisma.user.update({
+      where: {
+        email: auth.user.email,
+      },
+      data: {
+        name: name,
+        username: username,
+        email: email,
+        bio: bio,
+      },
+    });
+
+    return NextResponse.json({
+      message: "Update profile successfully",
+      success: true,
+    });
+  } catch (error: any) {
+    return NextResponse.json({
+      message: error.message,
+      success: false,
+    });
+  }
+}

@@ -1,27 +1,30 @@
 "use client";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import Skeleton from "./Skeleton";
+import { fetcher } from "@/utils/swr/fetcher";
+import useSWR from "swr";
 const Me = () => {
-  const { data: session, status }: any = useSession();
-  if (status === "loading") return <Skeleton />;
+  const { data, error, isLoading } = useSWR("/api/users/me", fetcher);
+  if (isLoading) return <Skeleton />;
+  if (error) return <div>failed to load</div>;
   return (
     <div className="w-full flex justify-between gap-3 items-center">
       <Link
-        href={`/u/${session?.user?.username}`}
+        href={`/u/${data?.data?.username}`}
         className="flex items-center gap-3 "
       >
         <Image
-          src={`${session?.user?.image}`}
+          src={`${data?.data?.image}`}
           width={50}
           height={50}
           alt="Profile"
           className="rounded-full"
         />
         <div>
-          <h1 className="text-sm font-semibold">{session?.user?.username}</h1>
-          <p className="text-xs">{session?.user?.name}</p>
+          <h1 className="text-sm font-semibold">{data?.data?.username}</h1>
+          <p className="text-xs">{data?.data?.name}</p>
         </div>
       </Link>
       <div className="">

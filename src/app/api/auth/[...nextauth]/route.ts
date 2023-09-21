@@ -60,6 +60,7 @@ const authOptions: NextAuthOptions = {
         token.username = user.username;
         token.image = user.image;
         token.idImage = user.idImage;
+        token.bio = user.bio;
       }
 
       if (account?.provider === "google") {
@@ -96,6 +97,7 @@ const authOptions: NextAuthOptions = {
           token.username = newUser.username;
           token.image = newUser.image;
           token.idImage = newUser.idImage;
+          token.bio = newUser.bio;
         } else {
           token.id = userDb.id;
           token.name = userDb.name;
@@ -103,6 +105,7 @@ const authOptions: NextAuthOptions = {
           token.username = userDb.username;
           token.image = userDb.image;
           token.idImage = userDb.idImage;
+          token.bio = userDb.bio;
         }
       }
 
@@ -117,6 +120,7 @@ const authOptions: NextAuthOptions = {
         session.user.email = token.email;
         session.user.image = token.image;
         session.user.idImage = token.idImage;
+        session.user.bio = token.bio;
       }
       return session;
     },

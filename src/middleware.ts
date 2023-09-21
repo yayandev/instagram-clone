@@ -7,4 +7,4 @@ export function mainMiddleware(req: NextRequest) {
   return res;
 }
 
-export default withAuth(mainMiddleware, ["/", "/message"]);
+export default withAuth(mainMiddleware, ["/", "/message", "/accounts/edit"]);

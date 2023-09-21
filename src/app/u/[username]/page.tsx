@@ -1,12 +1,10 @@
-import NavBottom from "@/components/nav-bottom/NavBottom";
-import NavTop from "@/components/nav-top/NavTop";
-import Sidebar from "@/components/sidebar/Sidebar";
 import Profile from "../Profile";
 import Highlight from "../Highlight";
 import Media from "../Media";
 import { Metadata } from "next";
 import axios from "axios";
 import { getServerSession } from "next-auth";
+import Layout from "@/components/layout/Layout";
 
 export async function generateMetadata({
   params,
@@ -30,18 +28,22 @@ async function UserProfile({ params }: { params: { username: string } }) {
   const data = await getUserProfile(params.username);
   const session = await getServerSession();
   const user = data.data;
-  if (!data.success) return <div>NOT FOUND!</div>;
   return (
-    <main className="md:flex">
-      <NavTop />
-      <Sidebar />
-      <div className="min-h-screen md:py-9 p-5 md:p-10  w-full md:w-[80%]">
-        <Profile userProfile={user} />
-        {session?.user?.email === user.email && <Highlight />}
-        <Media />
-      </div>
-      <NavBottom />
-    </main>
+    <Layout>
+      {!user ? (
+        <div className="w-full mt-10 flex justify-center items-center">
+          <h1 className="font-bold text-xl">USER TIDAK DITEMUKAN!</h1>
+        </div>
+      ) : (
+        <div>
+          <Profile userProfile={user} />
+          {session && (
+            <div>{session?.user?.email === user.email && <Highlight />}</div>
+          )}
+          <Media />
+        </div>
+      )}
+    </Layout>
   );
 }
 

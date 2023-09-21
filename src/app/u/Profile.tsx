@@ -1,17 +1,19 @@
 "use client";
+import Spinner from "@/components/spinner/Spinner";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { FaGear, FaPencil } from "react-icons/fa6";
 
 const Profile = ({ userProfile }: any) => {
+  const router = useRouter();
   const { data: session, status }: any = useSession();
-  const [following, setFollowing] = useState(false);
-  const [follower, setFollower] = useState(false);
   const [isProccesFollow, setIsProccesFollow] = useState(false);
-  if (status === "loading") return <div>loading</div>;
+  if (status === "loading") return <Spinner />;
+  const url = `/u/${userProfile.username}`;
 
   // handle Follow
   const handleFollow = async () => {
@@ -19,11 +21,52 @@ const Profile = ({ userProfile }: any) => {
     const res = await axios.get(`/api/follow/${userProfile.id}`);
     if (res.data.success) {
       // setFollowing(true);
-      setFollower(true);
+      router.refresh();
     }
     setIsProccesFollow(false);
   };
 
+  const handleUnFollow = async () => {
+    setIsProccesFollow(true);
+    const res = await axios.get(`/api/unfollow/${userProfile.id}`);
+    if (res.data.success) {
+      // setFollowing(true);
+      router.refresh();
+    }
+    setIsProccesFollow(false);
+  };
+
+  const SectionOption = () => {
+    const isFollowing = userProfile?.followedByIDs.includes(session?.user?.id);
+
+    if (isFollowing) {
+      return (
+        <div className="w-full my-2">
+          <button
+            onClick={handleUnFollow}
+            disabled={isProccesFollow}
+            className="disabled:opacity-70 px-5 py-1 bg-sky-500 text-white text-sm rounded"
+          >
+            {isProccesFollow ? <Spinner /> : "Unfollow"}
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <div className="w-full my-2">
+        <button
+          onClick={() =>
+            session ? handleFollow() : router.push(`/login?callbackUrl=${url}`)
+          }
+          disabled={isProccesFollow}
+          className="disabled:opacity-70 px-5 py-1 bg-sky-500 text-white text-sm rounded"
+        >
+          {isProccesFollow ? <Spinner /> : "Follow"}
+        </button>
+      </div>
+    );
+  };
   return (
     <div className="w-full flex gap-10 px-10 py-5">
       <Image
@@ -39,19 +82,29 @@ const Profile = ({ userProfile }: any) => {
             <h1 className="font-semibold text-lg">{userProfile.username}</h1>
             <h2 className="text-sm text-slate-500">{userProfile.name}</h2>
           </div>
-          {session.user?.email === userProfile.email && (
-            <div className="md:flex hidden">
-              <button className="p-2 rounded bg-slate-200 text-sm font-semibold hover:opacity-75">
-                <span className="md:block hidden">Edit profile</span>
-                <span className="md:hidden block">
-                  <FaPencil />
-                </span>
-              </button>
-              <button className="font-bold text-lg">
-                <FaGear />
-              </button>
+          {session && (
+            <div>
+              {session.user?.email === userProfile.email && (
+                <div className="md:flex hidden gap-3">
+                  <Link
+                    href={"/accounts/edit"}
+                    className="p-2 rounded bg-slate-200 text-sm font-semibold hover:opacity-75"
+                  >
+                    <span className="md:block hidden">Edit profile</span>
+                    <span className="md:hidden block">
+                      <FaPencil />
+                    </span>
+                  </Link>
+                  <button className="font-bold text-lg">
+                    <FaGear />
+                  </button>
+                </div>
+              )}
             </div>
           )}
+        </div>
+        <div>
+          {userProfile?.email !== session?.user.email && <SectionOption />}
         </div>
         <div className="flex items-center gap-3 my-3">
           <Link href={"#"} className="font-semibold">
@@ -66,7 +119,9 @@ const Profile = ({ userProfile }: any) => {
             <span className="text-sm text-slate-700">following</span>
           </Link>
         </div>
-        <div className="w-full">{/* <p>No Bio Nyet!</p> */}</div>
+        <div className="w-full">
+          <p>{userProfile.bio}</p>
+        </div>
       </div>
     </div>
   );

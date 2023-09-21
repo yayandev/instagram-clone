@@ -2,12 +2,30 @@
 import { fetcher } from "@/utils/swr/fetcher";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import useSWR from "swr";
 import Skeleton from "./Skeleton";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 const SuggestionList = () => {
+  const [isFollow, setIsFollow] = useState(false);
+  const router = useRouter();
   const { data, error, isLoading } = useSWR("/api/suggestions", fetcher);
   if (error) return <div>failed to load</div>;
+
+  const handleFollow = async (id: string) => {
+    setIsFollow(true);
+    const res = await axios.get(`/api/follow/${id}`);
+
+    if (res.data.success) {
+      // hapus data user yang difollow dari data.data
+      let removeData = data.data.filter((user: any) => user.id !== id);
+      // set data baru
+      data.data = removeData;
+      router.refresh();
+    }
+    setIsFollow(false);
+  };
   return (
     <div className="w-full mt-5">
       <div className="flex justify-between">
@@ -60,7 +78,11 @@ const SuggestionList = () => {
                       </div>
                     </Link>
                     <div className="">
-                      <button className="text-sm text-blue-400 font-semibold">
+                      <button
+                        onClick={() => handleFollow(user.id)}
+                        disabled={isFollow}
+                        className="disabled:opacity-50 text-sm text-blue-400 font-semibold"
+                      >
                         Follow
                       </button>
                     </div>

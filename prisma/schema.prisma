@@ -23,4 +23,5 @@ model User {
   followedByIDs String[] @db.ObjectId
   following     User[]   @relation("UserFollows", fields: [followingIDs], references: [id])
   followingIDs  String[] @db.ObjectId
+  bio String?
 }

@@ -18,6 +18,7 @@ export async function GET(
         name: true,
         image: true,
         email: true,
+        bio: true,
         followedByIDs: true,
         followingIDs: true,
         _count: true,
