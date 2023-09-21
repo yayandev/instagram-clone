@@ -1,20 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/utils/prisma/prisma";
-import { getServerSession } from "next-auth";
 // create suggestion for new user
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest, { params }: { params: any }) {
   try {
-    const query = req.nextUrl.searchParams;
-    // ambil data take dan skip dari url query
-    const skip = Number(query.get("skip")) || 0;
-    const take = Number(query.get("take")) || 5;
-    const auth: any = await getServerSession();
+    const email = params.params[0];
+    const id = params.params[1];
 
-    if (!auth) {
-      return NextResponse.redirect(new URL("/login", req.url));
-    }
-
-    const me = auth.user;
     const suggestions = await prisma.user.findMany({
       select: {
         id: true,
@@ -24,18 +15,17 @@ export async function GET(req: NextRequest) {
       },
       where: {
         email: {
-          not: me.email,
+          not: email,
         },
         AND: {
           following: {
             none: {
-              id: me.id,
+              id: id,
             },
           },
         },
       },
-      take: take,
-      skip: skip,
+      take: 5,
     });
 
     return NextResponse.json({
