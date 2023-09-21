@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: "Instagram - Edit profile",
 };
 
-export const getData = async (email: string) => {
+const getData = async (email: string) => {
   const res = await axios.get(`${process.env.DOMAIN}/api/users?email=${email}`);
   return res.data;
 };

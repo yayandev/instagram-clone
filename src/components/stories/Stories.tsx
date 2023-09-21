@@ -1,78 +1,96 @@
 "use client";
-
+// Import library yang diperlukan
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
+// Buat tipe data untuk objek story
+interface Story {
+  id: number;
+  image: string;
+  username: string;
+}
+
+// Komponen Stories
 const Stories = () => {
-  const stories = [
+  // Data stories dengan tipe Story[]
+  const stories: Story[] = [
     {
       id: 1,
-      image: "/user.jpg",
+      image: "/default-pp.png",
       username: "user1",
     },
     {
       id: 2,
-      image: "/user.jpg",
+      image: "/default-pp.png",
       username: "user2",
     },
     {
       id: 3,
-      image: "/user.jpg",
+      image: "/default-pp.png",
       username: "user3",
     },
     {
       id: 4,
-      image: "/user.jpg",
+      image: "/default-pp.png",
       username: "user4",
     },
     {
       id: 5,
-      image: "/user.jpg",
+      image: "/default-pp.png",
       username: "user5",
     },
     {
       id: 6,
-      image: "/user.jpg",
+      image: "/default-pp.png",
       username: "user6",
     },
     {
       id: 7,
-      image: "/user.jpg",
+      image: "/default-pp.png",
       username: "user7",
     },
     {
       id: 8,
-      image: "/user.jpg",
+      image: "/default-pp.png",
       username: "user8",
     },
     {
       id: 9,
-      image: "/user.jpg",
+      image: "/default-pp.png",
       username: "user9",
     },
     {
       id: 10,
-      image: "/user.jpg",
+      image: "/default-pp.png",
       username: "user10",
     },
     {
       id: 11,
-      image: "/user.jpg",
+      image: "/default-pp.png",
       username: "user11",
     },
     {
       id: 12,
-      image: "/user.jpg",
+      image: "/default-pp.png",
       username: "user12",
     },
     {
       id: 13,
-      image: "/user.jpg",
+      image: "/default-pp.png",
       username: "user13",
     },
+    {
+      id: 14,
+      image: "/default-pp.png",
+      username: "user14",
+    },
   ];
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const containerRef = useRef(null);
+
+  // State currentIndex dengan tipe number
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+
+  // Ref containerRef dengan tipe HTMLDivElement | null
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   // Efek samping untuk mengatur posisi scroll saat currentIndex berubah
   useEffect(() => {
@@ -84,6 +102,8 @@ const Stories = () => {
       });
     }
   }, [currentIndex]);
+
+  // Fungsi nextStory dan prevStory
   const nextStory = () => {
     setCurrentIndex((prevIndex) =>
       prevIndex === stories.length - 1 ? 0 : prevIndex + 1
