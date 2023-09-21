@@ -45,7 +45,7 @@ const SuggestionList = () => {
         </div>
       ) : (
         <div>
-          {data?.data.length === 0 ? (
+          {data?.data === undefined ? (
             <div className="w-full my-3">
               <h1 className="text-center text-sm font-semibold">
                 No suggestions
