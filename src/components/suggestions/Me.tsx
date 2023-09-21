@@ -1,13 +1,17 @@
 "use client";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import Skeleton from "./Skeleton";
 import { fetcher } from "@/utils/swr/fetcher";
 import useSWR from "swr";
 const Me = () => {
-  const { data, error, isLoading } = useSWR("/api/users/me", fetcher);
-  if (isLoading) return <Skeleton />;
+  const { data: session, status } = useSession();
+  const { data, error, isLoading } = useSWR(
+    "/api/users?email=" + session?.user?.email,
+    fetcher
+  );
+  if (status === "loading" || isLoading) return <Skeleton />;
   if (error) return <div>failed to load</div>;
   return (
     <div className="w-full flex justify-between gap-3 items-center">

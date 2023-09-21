@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 
 export async function GET(req: NextRequest) {
   try {
+    ("use server");
     const auth: any = await getServerSession();
     if (!auth) {
       return NextResponse.json({
@@ -24,6 +25,7 @@ export async function GET(req: NextRequest) {
         email: true,
         bio: true,
         isVerify: true,
+        _count: true,
       },
     });
 

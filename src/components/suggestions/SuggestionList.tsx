@@ -7,10 +7,15 @@ import useSWR from "swr";
 import Skeleton from "./Skeleton";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 const SuggestionList = () => {
   const [isFollow, setIsFollow] = useState(false);
   const router = useRouter();
-  const { data, error, isLoading } = useSWR("/api/suggestions", fetcher);
+  const { data: session, status }: any = useSession();
+  const { data, error, isLoading } = useSWR(
+    `/api/suggestions/${session?.user?.email}/${session?.user?.id}`,
+    fetcher
+  );
   if (error) return <div>failed to load</div>;
 
   const handleFollow = async (id: string) => {
@@ -35,7 +40,7 @@ const SuggestionList = () => {
         <button className="font-semibold text-sm">See All</button>
       </div>
 
-      {isLoading ? (
+      {isLoading || status === "loading" ? (
         <div className="flex w-full flex-col gap-3 my-3">
           <Skeleton />
           <Skeleton />
