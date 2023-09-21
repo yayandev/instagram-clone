@@ -23,6 +23,11 @@ export async function GET(req: NextRequest, { params }: { params: any }) {
               id: id,
             },
           },
+          followedBy: {
+            none: {
+              id: id,
+            },
+          },
         },
       },
       take: 5,
