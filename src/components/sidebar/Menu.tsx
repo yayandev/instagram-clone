@@ -14,7 +14,6 @@ import {
   FaSistrix,
 } from "react-icons/fa6";
 import Spinner from "../spinner/Spinner";
-import { stat } from "fs";
 
 const Menu = () => {
   const { setIsOpenModalAddPost } = useModalAddPost();

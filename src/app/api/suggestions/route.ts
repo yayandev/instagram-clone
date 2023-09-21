@@ -32,11 +32,6 @@ export async function GET(req: NextRequest) {
               id: me.id,
             },
           },
-          followedBy: {
-            none: {
-              id: me.id,
-            },
-          },
         },
       },
       take: take,

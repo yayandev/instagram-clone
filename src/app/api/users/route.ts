@@ -5,44 +5,71 @@ import { getServerSession } from "next-auth";
 export async function GET(req: NextRequest) {
   try {
     const query = req.nextUrl.searchParams;
-    const take = Number(query.get("take")) || 5;
-    const skip = Number(query.get("skip")) || 0;
-    const auth: any = await getServerSession();
-    if (!auth) {
-      return NextResponse.redirect(new URL("/login", req.url));
-    }
+    const email = query.get("email");
 
-    const me: any = await prisma.user.findUnique({
-      where: {
-        email: auth.user.email,
-      },
-    });
+    if (!email) {
+      const take = Number(query.get("take")) || 5;
+      const skip = Number(query.get("skip")) || 0;
+      const auth: any = await getServerSession();
+      if (!auth) {
+        return NextResponse.redirect(new URL("/login", req.url));
+      }
 
-    const users = await prisma.user.findMany({
-      where: {
-        email: {
-          not: auth.user.email,
+      const me: any = await prisma.user.findUnique({
+        where: {
+          email: auth.user.email,
         },
+      });
+
+      const users = await prisma.user.findMany({
+        where: {
+          email: {
+            not: auth.user.email,
+          },
+        },
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          username: true,
+          bio: true,
+          isVerify: true,
+          followedByIDs: true,
+          followingIDs: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+        take: take,
+        skip: skip,
+      });
+
+      return NextResponse.json({
+        data: users,
+        take: take,
+        skip: skip,
+        message: "success",
+        success: true,
+      });
+    }
+    const user = await prisma.user.findUnique({
+      where: {
+        email: email,
       },
       select: {
         id: true,
         name: true,
         image: true,
         username: true,
+        bio: true,
+        isVerify: true,
+        email: true,
+        _count: true,
         createdAt: true,
         updatedAt: true,
-        isVerify: true,
-        followedByIDs: true,
-        followingIDs: true,
       },
-      take: take,
-      skip: skip,
     });
-
     return NextResponse.json({
-      data: users,
-      take: take,
-      skip: skip,
+      data: user,
       message: "success",
       success: true,
     });

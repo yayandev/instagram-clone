@@ -6,7 +6,10 @@ export async function GET(req: NextRequest) {
   try {
     const auth: any = await getServerSession();
     if (!auth) {
-      return NextResponse.redirect(new URL("/login", req.url));
+      return NextResponse.json({
+        message: "unauthorized",
+        success: false,
+      });
     }
 
     const me = await prisma.user.findUnique({
@@ -18,9 +21,9 @@ export async function GET(req: NextRequest) {
         username: true,
         name: true,
         image: true,
+        email: true,
+        bio: true,
         isVerify: true,
-        followedByIDs: true,
-        followingIDs: true,
       },
     });
 

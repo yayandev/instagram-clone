@@ -1,25 +1,20 @@
 "use client";
 import Spinner from "@/components/spinner/Spinner";
-import { fetcher } from "@/utils/swr/fetcher";
 import axios from "axios";
 import Image from "next/image";
 import { SyntheticEvent, useState } from "react";
 import { FaPencil } from "react-icons/fa6";
-import useSWR from "swr";
-const Form = () => {
+const Form = ({ data }: any) => {
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
   const [msg, setMsg] = useState("");
   const [values, setValues] = useState({
-    bio: "",
-    username: "",
-    email: "",
-    name: "",
-    image: "",
-    idImage: "",
+    bio: data.data.bio,
+    username: data.data.username,
+    email: data.data.email,
+    name: data.data.name,
+    image: data.data.image,
+    idImage: data.data.idImage,
   });
-  const { error, data, isLoading } = useSWR("/api/users/me", fetcher);
-  if (isLoading) return <Spinner />;
-  if (error) return <div>failed to load</div>;
 
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
@@ -53,7 +48,7 @@ const Form = () => {
       )}
       <div className="flex gap-3 items-center">
         <Image
-          src={data?.data.image}
+          src={values.image}
           width={70}
           height={70}
           className="rounded-full"
@@ -76,7 +71,6 @@ const Form = () => {
         <textarea
           id="bio"
           value={values.bio}
-          defaultValue={data?.data?.bio}
           onChange={(e) => setValues({ ...values, bio: e.target.value })}
           className="p-3 border w-full md:w-[250px] h-[100px] focus:outline-none"
         ></textarea>
@@ -91,7 +85,6 @@ const Form = () => {
           type="text"
           id="username"
           value={values.username}
-          defaultValue={data?.data?.username}
           onChange={(e) => setValues({ ...values, username: e.target.value })}
           className="p-2 border w-full md:w-[250px]  focus:outline-none"
         />
