@@ -16,7 +16,10 @@ import { useModalSettings } from "@/context/ModalSettingsContext";
 const Profile = ({ username }: { username: string }) => {
   const router = useRouter();
   const { setIsOpen } = useModalSettings();
-  const { error, data, isLoading } = useSWR(`/api/users/${username}`, fetcher);
+  const { error, data, isLoading, mutate } = useSWR(
+    `/api/users/${username}`,
+    fetcher
+  );
   if (error) return <div>failed to load</div>;
   const { data: session, status }: any = useSession();
   const [isProccesFollow, setIsProccesFollow] = useState(false);
@@ -33,7 +36,8 @@ const Profile = ({ username }: { username: string }) => {
     const res = await axios.get(`/api/follow/${data.data?.id}`);
     if (res.data.success) {
       // setFollowing(true);
-      router.refresh();
+      // router.refresh();
+      mutate();
     }
     setIsProccesFollow(false);
   };
@@ -43,7 +47,8 @@ const Profile = ({ username }: { username: string }) => {
     const res = await axios.get(`/api/unfollow/${data.data?.id}`);
     if (res.data.success) {
       // setFollowing(true);
-      router.refresh();
+      mutate();
+      // router.refresh();
     }
     setIsProccesFollow(false);
   };
