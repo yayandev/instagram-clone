@@ -7,6 +7,7 @@ export async function GET(req: NextRequest) {
     const query = req.nextUrl.searchParams;
     const email = query.get("email");
     const id = query.get("id");
+    const username = query.get("username");
 
     if (email && !id) {
       const user = await prisma.user.findUnique({
@@ -38,6 +39,31 @@ export async function GET(req: NextRequest) {
       const user = await prisma.user.findUnique({
         where: {
           id: id,
+        },
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          username: true,
+          bio: true,
+          isVerify: true,
+          email: true,
+          _count: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
+      return NextResponse.json({
+        data: user,
+        message: "success",
+        success: true,
+      });
+    }
+
+    if (username && !email && !id) {
+      const user = await prisma.user.findUnique({
+        where: {
+          username: username,
         },
         select: {
           id: true,
