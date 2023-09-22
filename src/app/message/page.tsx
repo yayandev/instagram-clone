@@ -4,7 +4,7 @@ import React from "react";
 const PageMessage = () => {
   return (
     <Layout>
-      <h1>Message Commingsoon!</h1>
+      <h1>Commingsoon!</h1>
     </Layout>
   );
 };
