@@ -6,26 +6,38 @@ export async function GET(req: NextRequest) {
   try {
     const query = req.nextUrl.searchParams;
     const email = query.get("email");
+    const id = query.get("id");
 
-    if (!email) {
-      const take = Number(query.get("take")) || 5;
-      const skip = Number(query.get("skip")) || 0;
-      const auth: any = await getServerSession();
-      if (!auth) {
-        return NextResponse.redirect(new URL("/login", req.url));
-      }
-
-      const me: any = await prisma.user.findUnique({
+    if (email && !id) {
+      const user = await prisma.user.findUnique({
         where: {
-          email: auth.user.email,
+          email: email,
+        },
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          idImage: true,
+          username: true,
+          bio: true,
+          isVerify: true,
+          email: true,
+          _count: true,
+          createdAt: true,
+          updatedAt: true,
         },
       });
+      return NextResponse.json({
+        data: user,
+        message: "success",
+        success: true,
+      });
+    }
 
-      const users = await prisma.user.findMany({
+    if (id && !email) {
+      const user = await prisma.user.findUnique({
         where: {
-          email: {
-            not: auth.user.email,
-          },
+          id: id,
         },
         select: {
           id: true,
@@ -34,42 +46,52 @@ export async function GET(req: NextRequest) {
           username: true,
           bio: true,
           isVerify: true,
-          followedByIDs: true,
-          followingIDs: true,
+          email: true,
+          _count: true,
           createdAt: true,
           updatedAt: true,
         },
-        take: take,
-        skip: skip,
       });
-
       return NextResponse.json({
-        data: users,
-        take: take,
-        skip: skip,
+        data: user,
         message: "success",
         success: true,
       });
     }
-    const user = await prisma.user.findUnique({
+
+    const take = Number(query.get("take")) || 5;
+    const skip = Number(query.get("skip")) || 0;
+    const auth: any = await getServerSession();
+    if (!auth) {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
+
+    const me: any = await prisma.user.findUnique({
       where: {
-        email: email,
+        email: auth.user.email,
+      },
+    });
+
+    const users = await prisma.user.findMany({
+      where: {
+        email: {
+          not: auth.user.email,
+        },
       },
       select: {
         id: true,
         name: true,
         image: true,
         username: true,
-        bio: true,
-        isVerify: true,
-        email: true,
-        _count: true,
-        createdAt: true,
-        updatedAt: true,
       },
+      take: take,
+      skip: skip,
     });
+
     return NextResponse.json({
-      data: user,
+      data: users,
+      take: take,
+      skip: skip,
       message: "success",
       success: true,
     });
@@ -91,9 +113,9 @@ export async function PUT(req: NextRequest) {
 
     const body = await req.json();
 
-    const { name, username, email, bio } = body;
+    const { name, bio } = body;
 
-    if (!name || !username || !email || !bio) {
+    if (!name || !bio) {
       return NextResponse.json({
         message: "All fields are required",
         success: false,
@@ -106,8 +128,6 @@ export async function PUT(req: NextRequest) {
       },
       data: {
         name: name,
-        username: username,
-        email: email,
         bio: bio,
       },
     });

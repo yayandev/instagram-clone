@@ -1,22 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/utils/prisma/prisma";
-import { getServerSession } from "next-auth";
 
-export async function GET(req: NextRequest) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { username: string } }
+) {
   try {
-    const auth: any = await getServerSession();
-    if (!auth) {
-      return NextResponse.redirect(new URL("/login", req.url));
-    }
-
-    const me = auth.user;
-
-    const following = await prisma.user.findUnique({
+    const username = params.username;
+    const followers = await prisma.user.findUnique({
       where: {
-        email: me.email,
+        username,
       },
-      include: {
-        following: {
+      select: {
+        followedBy: {
           select: {
             id: true,
             username: true,
@@ -24,11 +20,11 @@ export async function GET(req: NextRequest) {
             image: true,
           },
         },
+        _count: true,
       },
     });
-
     return NextResponse.json({
-      data: following,
+      data: followers,
       message: "success",
       success: true,
     });

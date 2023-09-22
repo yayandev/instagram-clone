@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/utils/prisma/prisma";
-// create suggestion for new user
-export async function GET(req: NextRequest, { params }: { params: any }) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
-    const email = params.params[0];
-    const id = params.params[1];
+    const id = params.id;
 
     const suggestions = await prisma.user.findMany({
       select: {
@@ -14,8 +15,8 @@ export async function GET(req: NextRequest, { params }: { params: any }) {
         image: true,
       },
       where: {
-        email: {
-          not: email,
+        id: {
+          not: id,
         },
         AND: {
           following: {

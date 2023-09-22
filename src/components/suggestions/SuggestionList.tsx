@@ -13,7 +13,7 @@ const SuggestionList = () => {
   const router = useRouter();
   const { data: session, status }: any = useSession();
   const { data, error, isLoading } = useSWR(
-    `/api/suggestions/${session?.user?.email}/${session?.user?.id}`,
+    `/api/suggestions/${session?.user?.id}`,
     fetcher
   );
   if (error) return <div>failed to load</div>;
@@ -23,10 +23,6 @@ const SuggestionList = () => {
     const res = await axios.get(`/api/follow/${id}`);
 
     if (res.data.success) {
-      // hapus data user yang difollow dari data.data
-      let removeData = data.data.filter((user: any) => user.id !== id);
-      // set data baru
-      data.data = removeData;
       router.refresh();
     }
     setIsFollow(false);

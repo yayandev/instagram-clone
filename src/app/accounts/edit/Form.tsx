@@ -2,10 +2,16 @@
 import Spinner from "@/components/spinner/Spinner";
 import axios from "axios";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { SyntheticEvent, useState } from "react";
+import { BsArrow90DegLeft } from "react-icons/bs";
 import { FaPencil } from "react-icons/fa6";
+import { CldUploadWidget } from "next-cloudinary";
 const Form = ({ data }: any) => {
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
+  const [isLoadingUpload, setIsLoadingUpload] = useState(false);
+  const router = useRouter();
   const [msg, setMsg] = useState("");
   const [values, setValues] = useState({
     bio: data.data.bio,
@@ -16,19 +22,20 @@ const Form = ({ data }: any) => {
     idImage: data.data.idImage,
   });
 
+  const [lastImage, setLastImage] = useState(data.data.idImage);
+
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
     setIsLoadingUpdate(true);
 
     const res = await axios.put("/api/users", {
       name: values.name,
-      username: values.username,
-      email: values.email,
       bio: values.bio,
     });
 
     if (res.data.success) {
       setMsg(res.data.message);
+      router.refresh();
     } else {
       setMsg(res.data.message);
     }
@@ -39,7 +46,12 @@ const Form = ({ data }: any) => {
   return (
     <form className="w-full md:px-10 px-3" onSubmit={handleSubmit}>
       <div className="my-2">
-        <h1 className="font-bold text-xl">Edit profile</h1>
+        <Link
+          href={"/u/" + values.username}
+          className="font-semibold text-xl flex gap-2 items-center"
+        >
+          <BsArrow90DegLeft /> <span>Edit profile</span>
+        </Link>
       </div>
       {msg && (
         <div className="my-2">
@@ -54,13 +66,47 @@ const Form = ({ data }: any) => {
           className="rounded-full"
           alt="profile"
         />
-        <button
-          type="button"
-          className="font-semibold text-sm text-blue-500 flex gap-2 items-center"
+
+        <CldUploadWidget
+          onUpload={async (result: any) => {
+            setIsLoadingUpload(true);
+            const res = await axios.put("/api/change/image", {
+              idImage: result.info.public_id,
+              image: result.info.secure_url,
+              idLastImage: lastImage,
+            });
+
+            if (res.data.success) {
+              setMsg(res.data.message);
+            }
+
+            setValues({
+              ...values,
+              image: result.info.secure_url,
+              idImage: result.info.public_id,
+            });
+            setIsLoadingUpload(false);
+          }}
+          uploadPreset="efvh5bik"
         >
-          <FaPencil />
-          <span>Change photo</span>
-        </button>
+          {({ open }) => {
+            function handleOnClick(e: SyntheticEvent) {
+              e.preventDefault();
+              open();
+            }
+            return (
+              <button
+                type="button"
+                disabled={isLoadingUpload}
+                onClick={handleOnClick}
+                className="font-semibold text-sm text-blue-500 flex gap-2 items-center"
+              >
+                <FaPencil />
+                <span>{isLoadingUpload ? "Uploading..." : "Change photo"}</span>
+              </button>
+            );
+          }}
+        </CldUploadWidget>
       </div>
       <div className="my-2">
         <div>
@@ -84,9 +130,9 @@ const Form = ({ data }: any) => {
         <input
           type="text"
           id="username"
+          disabled
           value={values.username}
-          onChange={(e) => setValues({ ...values, username: e.target.value })}
-          className="p-2 border w-full md:w-[250px]  focus:outline-none"
+          className="disabled:bg-slate-200 p-2 border w-full md:w-[250px]  focus:outline-none"
         />
       </div>
       <div className="my-2">
@@ -99,7 +145,6 @@ const Form = ({ data }: any) => {
           type="email"
           disabled
           value={values.email}
-          onChange={(e) => setValues({ ...values, email: e.target.value })}
           id="email"
           className="disabled:bg-slate-200 p-2 border w-full md:w-[250px]  focus:outline-none"
         />

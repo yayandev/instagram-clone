@@ -6,7 +6,7 @@ import Skeleton from "./Skeleton";
 import { fetcher } from "@/utils/swr/fetcher";
 import useSWR from "swr";
 const Me = () => {
-  const { data: session, status } = useSession();
+  const { data: session, status }: any = useSession();
   const { data, error, isLoading } = useSWR(
     "/api/users?email=" + session?.user?.email,
     fetcher

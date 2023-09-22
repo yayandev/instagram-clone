@@ -25,8 +25,8 @@ const getUserProfile = async (username: string) => {
 };
 
 async function UserProfile({ params }: { params: { username: string } }) {
-  const data = await getUserProfile(params.username);
   const session = await getServerSession();
+  const data = await getUserProfile(params.username);
   const user = data.data;
   return (
     <Layout>

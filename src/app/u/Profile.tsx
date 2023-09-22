@@ -80,20 +80,19 @@ const Profile = ({ userProfile }: any) => {
         <div className="gap-5 items-center flex">
           <div>
             <h1 className="font-semibold text-lg">{userProfile.username}</h1>
-            <h2 className="text-sm text-slate-500">{userProfile.name}</h2>
           </div>
           {session && (
             <div>
               {session.user?.email === userProfile.email && (
-                <div className="md:flex hidden gap-3">
+                <div className="flex gap-3">
                   <Link
                     href={"/accounts/edit"}
-                    className="p-2 rounded bg-slate-200 text-sm font-semibold hover:opacity-75"
+                    className="p-2 rounded flex gap-2 items-center bg-slate-200 text-sm font-semibold hover:opacity-75"
                   >
-                    <span className="md:block hidden">Edit profile</span>
-                    <span className="md:hidden block">
+                    <div className="">
                       <FaPencil />
-                    </span>
+                    </div>
+                    <div className="md:block hidden">Edit profile</div>
                   </Link>
                   <button className="font-bold text-lg">
                     <FaGear />
@@ -118,6 +117,9 @@ const Profile = ({ userProfile }: any) => {
             {userProfile._count.following}{" "}
             <span className="text-sm text-slate-700">following</span>
           </Link>
+        </div>
+        <div className="my-2">
+          <h2 className="text-sm text-slate-500">{userProfile.name}</h2>
         </div>
         <div className="w-full">
           <p>{userProfile.bio}</p>

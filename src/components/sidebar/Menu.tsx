@@ -1,6 +1,5 @@
 "use client";
 import { useModalAddPost } from "@/context/ModalCreatePostContext";
-import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -13,12 +12,10 @@ import {
   FaRegSquarePlus,
   FaSistrix,
 } from "react-icons/fa6";
-import Spinner from "../spinner/Spinner";
 
-const Menu = () => {
+const Menu = ({ data, status }: any) => {
   const { setIsOpenModalAddPost } = useModalAddPost();
-  const { data: session, status } = useSession();
-  if (status === "loading") return <Spinner />;
+
   if (status === "unauthenticated") {
     return (
       <div className="flex w-full justify-center items-center">
@@ -73,14 +70,15 @@ const Menu = () => {
         <FaRegSquarePlus /> <span className="lg:block hidden">Create</span>
       </button>
       <Link
-        href={`/accounts/edit`}
+        href={`/u/${data?.data?.username}`}
         className="flex gap-3 items-center justify-center lg:justify-start text-xl lg:text-lg  p-2 rounded-sm hover:bg-slate-200"
       >
         <Image
-          src={"/favicon-32x32.png"}
+          src={data?.data.image}
           width={32}
           height={32}
           alt="profile"
+          className="rounded-full"
         />{" "}
         <span className="lg:block hidden">Profile</span>
       </Link>

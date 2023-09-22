@@ -14,20 +14,24 @@ export async function GET(
       },
       select: {
         id: true,
-        username: true,
         name: true,
-        image: true,
+        username: true,
         email: true,
-        bio: true,
+        image: true,
+        idImage: true,
+        isVerify: true,
+        createdAt: true,
+        updatedAt: true,
         followedByIDs: true,
         followingIDs: true,
+        bio: true,
         _count: true,
       },
     });
 
     return NextResponse.json({
       data: user,
-      message: "get user profile successfully",
+      message: "success",
       success: true,
     });
   } catch (error: any) {
