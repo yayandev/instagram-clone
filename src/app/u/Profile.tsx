@@ -11,9 +11,11 @@ import { FaGear, FaPencil } from "react-icons/fa6";
 import useSWR from "swr";
 import Skeleton from "./Skeleton";
 import Media from "./Media";
+import { useModalSettings } from "@/context/ModalSettingsContext";
 
 const Profile = ({ username }: { username: string }) => {
   const router = useRouter();
+  const { setIsOpen } = useModalSettings();
   const { error, data, isLoading } = useSWR(`/api/users/${username}`, fetcher);
   if (error) return <div>failed to load</div>;
   const { data: session, status }: any = useSession();
@@ -105,7 +107,10 @@ const Profile = ({ username }: { username: string }) => {
                       </div>
                       <div className="md:block hidden">Edit profile</div>
                     </Link>
-                    <button className="font-bold text-lg">
+                    <button
+                      onClick={() => setIsOpen(true)}
+                      className="font-bold text-lg"
+                    >
                       <FaGear />
                     </button>
                   </div>

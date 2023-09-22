@@ -42,7 +42,7 @@ const NavBottom = ({ user }: any) => {
           width={32}
           height={32}
           alt="profile"
-          className="rounded-full"
+          className="rounded-full w-[32px] h-[32px]"
         />{" "}
       </Link>
     </div>

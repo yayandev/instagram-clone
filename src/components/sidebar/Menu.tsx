@@ -1,5 +1,6 @@
 "use client";
 import { useModalAddPost } from "@/context/ModalCreatePostContext";
+import { useModalSettings } from "@/context/ModalSettingsContext";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -15,6 +16,7 @@ import {
 
 const Menu = ({ data, status }: any) => {
   const { setIsOpenModalAddPost } = useModalAddPost();
+  const { setIsOpen } = useModalSettings();
 
   if (status === "unauthenticated") {
     return (
@@ -78,17 +80,17 @@ const Menu = ({ data, status }: any) => {
           width={32}
           height={32}
           alt="profile"
-          className="rounded-full"
+          className="rounded-full w-[32px] h-[32px]"
         />{" "}
         <span className="lg:block hidden">Profile</span>
       </Link>
-      <Link
-        href={"#"}
+      <button
+        onClick={() => setIsOpen(true)}
         className="flex gap-3 items-center justify-center lg:justify-start text-xl lg:text-lg  p-2 rounded-sm  hover:bg-slate-200 absolute bottom-0 "
       >
         <FaBars />
         <span className="lg:block hidden">More</span>
-      </Link>
+      </button>
     </div>
   );
 };

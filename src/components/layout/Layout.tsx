@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import Spinner from "../spinner/Spinner";
 import { fetcher } from "@/utils/swr/fetcher";
 import useSWR from "swr";
+import ModalSetting from "../modal/settings/ModalSetting";
 
 function Layout({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
@@ -34,6 +35,7 @@ function Layout({ children }: { children: React.ReactNode }) {
       </div>
       {session && <NavBottom user={data?.data} />}
       <ModalAddPosts />
+      <ModalSetting />
     </main>
   );
 }

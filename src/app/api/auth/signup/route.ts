@@ -6,6 +6,48 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { name, username, email, password } = body;
 
+    if (!name || !username || !email || !password) {
+      return NextResponse.json({
+        message: "Form data tidak boleh kosong",
+        success: false,
+      });
+    }
+
+    if (username.length < 4) {
+      return NextResponse.json({
+        message: "Username minimal 4 karakter",
+        success: false,
+      });
+    }
+
+    if (password.length === 0) {
+      return NextResponse.json({
+        message: "Password tidak boleh kosong",
+        success: false,
+      });
+    }
+
+    if (name.length === 0) {
+      return NextResponse.json({
+        message: "Nama tidak boleh kosong",
+        success: false,
+      });
+    }
+
+    if (email.length === 0) {
+      return NextResponse.json({
+        message: "Email tidak boleh kosong",
+        success: false,
+      });
+    }
+
+    if (password.length < 8) {
+      return NextResponse.json({
+        message: "Password minimal 8 karakter",
+        success: false,
+      });
+    }
+
     // validasi username
     const usernameValidation = await prisma.user.findUnique({
       where: {
@@ -16,6 +58,20 @@ export async function POST(req: NextRequest) {
     if (usernameValidation) {
       return NextResponse.json({
         message: "Username already exists",
+        success: false,
+      });
+    }
+
+    // validasi email
+    const emailValidation = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (emailValidation) {
+      return NextResponse.json({
+        message: "Email sudah digunakan",
         success: false,
       });
     }

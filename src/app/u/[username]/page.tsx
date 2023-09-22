@@ -7,9 +7,8 @@ export async function generateMetadata({
 }: {
   params: { username: string };
 }): Promise<Metadata> {
-  const username = params.username;
   return {
-    title: "Instagram - " + username,
+    title: "Instagram - " + params.username,
   };
 }
 
