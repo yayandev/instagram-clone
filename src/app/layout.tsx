@@ -26,7 +26,8 @@ export const metadata: Metadata = {
       url: "https://github.com/yayanfr20",
     },
   ],
-  manifest: "/site.webmanifest",
+  manifest: "/manifest.json",
+  icons: { apple: "/apple-touch-icon.png" },
 };
 
 export default function RootLayout({
