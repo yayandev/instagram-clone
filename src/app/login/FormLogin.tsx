@@ -87,7 +87,10 @@ const FormLogin = () => {
         </button>
       </div>
       <div className="w-full text-center my-2">
-        <Link href={"#"} className="text-[#00376b] text-sm">
+        <Link
+          href={"/accounts/password/reset"}
+          className="text-[#00376b] text-sm"
+        >
           Forgot password?
         </Link>
       </div>

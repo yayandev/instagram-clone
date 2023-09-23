@@ -1,16 +1,18 @@
 "use client";
 import Spinner from "@/components/spinner/Spinner";
+import { fetcher } from "@/utils/swr/fetcher";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { SyntheticEvent, useState } from "react";
 import { BsArrow90DegLeft } from "react-icons/bs";
+import useSWR from "swr";
 
 const Form = () => {
   const [msg, setMsg] = useState("");
   const [notif, setNotif] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isProccess, setisProccess] = useState(false);
   const { data: session, status }: any = useSession();
   if (status === "loading") return <Spinner />;
   const [values, setValues] = useState({
@@ -19,9 +21,16 @@ const Form = () => {
     confirm: "",
   });
 
+  const { data, error, isLoading } = useSWR(
+    `/api/users?id=${session?.user?.id}`,
+    fetcher
+  );
+  if (error) return <div>Server Error!</div>;
+  if (status === "loading" || isLoading) return <Spinner />;
+
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    setisProccess(true);
     const res = await axios.put("/api/change/password", {
       password: values.oldpassword,
       newPassword: values.newpassword,
@@ -40,7 +49,7 @@ const Form = () => {
       setMsg(res.data.message);
       setNotif("text-red-600");
     }
-    setIsLoading(false);
+    setisProccess(false);
   };
 
   return (
@@ -56,13 +65,13 @@ const Form = () => {
 
       <div className="flex gap-3 items-center">
         <Image
-          src={session?.user?.image}
+          src={data?.data?.image}
           width={70}
           height={70}
           className="rounded-full w-[70px] h-[70px]"
           alt="profile"
         />
-        <div className="font-bold">{session?.user?.username}</div>
+        <div className="font-bold">{data?.data?.username}</div>
       </div>
       {msg && (
         <div className="my-2">
@@ -119,11 +128,19 @@ const Form = () => {
         />
       </div>
       <div className="my-2">
+        <Link
+          href={"/accounts/password/reset"}
+          className="font-semibold text-sm text-sky-500"
+        >
+          Forgot password?
+        </Link>
+      </div>
+      <div className="my-2">
         <button
-          disabled={isLoading}
+          disabled={isProccess}
           className="disabled:opacity-70 bg-sky-500 font-semibold text-white p-2 rounded"
         >
-          {isLoading ? <Spinner /> : "Change password"}
+          {isProccess ? <Spinner /> : "Change password"}
         </button>
       </div>
     </form>

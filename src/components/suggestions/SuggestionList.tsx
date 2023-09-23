@@ -8,11 +8,12 @@ import Skeleton from "./Skeleton";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import Verify from "../verify/Verify";
 const SuggestionList = () => {
   const [isFollow, setIsFollow] = useState(false);
   const router = useRouter();
   const { data: session, status }: any = useSession();
-  const { data, error, isLoading } = useSWR(
+  const { data, error, isLoading, mutate } = useSWR(
     `/api/suggestions/${session?.user?.id}`,
     fetcher
   );
@@ -23,7 +24,7 @@ const SuggestionList = () => {
     const res = await axios.get(`/api/follow/${id}`);
 
     if (res.data.success) {
-      router.refresh();
+      mutate();
     }
     setIsFollow(false);
   };
@@ -69,11 +70,12 @@ const SuggestionList = () => {
                         width={50}
                         height={50}
                         alt="Profile"
-                        className="rounded-full"
+                        className="rounded-full w-[50px] h-[50px]"
                       />
                       <div>
-                        <h1 className="text-sm font-semibold">
-                          {user.username}
+                        <h1 className="text-sm font-semibold flex items-center gap-1">
+                          <span>{user.username}</span>
+                          {user.isVerify && <Verify />}
                         </h1>
                         <p className="text-xs">{user.name}</p>
                       </div>

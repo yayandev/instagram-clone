@@ -1,6 +1,7 @@
 "use client";
 import { useModalAddPost } from "@/context/ModalCreatePostContext";
 import { useModalSettings } from "@/context/ModalSettingsContext";
+import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -21,7 +22,10 @@ const Menu = ({ data, status }: any) => {
   if (status === "unauthenticated") {
     return (
       <div className="flex w-full justify-center items-center">
-        <button className="py-2 px-5 rounded bg-sky-500 text-white">
+        <button
+          onClick={() => signIn()}
+          className="py-2 px-5 rounded bg-sky-500 text-white"
+        >
           Sign in
         </button>
       </div>

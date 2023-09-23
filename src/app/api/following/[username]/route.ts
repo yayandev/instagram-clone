@@ -18,6 +18,7 @@ export async function GET(
             username: true,
             name: true,
             image: true,
+            isVerify: true,
           },
         },
         _count: true,

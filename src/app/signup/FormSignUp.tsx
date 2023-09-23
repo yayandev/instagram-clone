@@ -12,7 +12,9 @@ const FormSignUp = () => {
     email: "",
     password: "",
   });
+  const [checkUsername, setCheckUsername] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [notif, setNotif] = useState("");
   const [msg, setMsg] = useState("");
   const router = useRouter();
   const handleSubmit = async (e: SyntheticEvent) => {
@@ -23,6 +25,7 @@ const FormSignUp = () => {
       router.push("/login");
     } else {
       setMsg(res.data.message);
+      setNotif("text-red-600");
       setIsLoading(false);
     }
   };
@@ -30,9 +33,15 @@ const FormSignUp = () => {
     <form className="w-full p-3" onSubmit={handleSubmit}>
       {msg && (
         <div className="w-full my-2">
-          <p className="text-red-500 text-sm text-center">{msg}</p>
+          <p className={"text-sm text-center " + notif}>{msg}</p>
         </div>
       )}
+      {checkUsername && (
+        <div className="w-full my-2 flex justify-center h-[30px]">
+          <div className="spinner h-[30px] w-[30px]"></div>
+        </div>
+      )}
+
       <input
         type="email"
         value={values.email}
@@ -52,7 +61,36 @@ const FormSignUp = () => {
       <input
         type="text"
         value={values.username}
-        onChange={(e) => setValues({ ...values, username: e.target.value })}
+        onChange={async (e) => {
+          setCheckUsername(true);
+          setValues({
+            ...values,
+            username: e.target.value.toLowerCase().trim(),
+          });
+
+          let toxic: any = [];
+          const res = await axios.get("/kata-kasar.json");
+          toxic = res.data;
+
+          // munculkan msg ketika menekan space
+          if (e.target.value.includes(" ")) {
+            setNotif("text-red-600");
+            setMsg("username tidak boleh mengandung spasi!");
+          } else if (e.target.value.length < 4) {
+            setNotif("text-red-600");
+            setMsg("username minimal 4 karakter!");
+          } else if (toxic.includes(e.target.value.toLowerCase().trim())) {
+            setNotif("text-red-600");
+            setMsg("username tidak boleh mengandung kata-kata berbahaya!");
+          } else if (e.target.value.length > 20) {
+            setNotif("text-red-600");
+            setMsg("username maksimal 15 karakter!");
+          } else {
+            setNotif("");
+            setMsg("");
+          }
+          setCheckUsername(false);
+        }}
         required
         placeholder="Username"
         className="w-full p-2 bg-[#fafafa] rounded-sm text-sm border mb-2 focus:outline-none"

@@ -48,10 +48,19 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // validasi username
+    // rubah menjadi lowercase
+    const ValidUsername = username.toLocaleLowerCase();
+
+    if (ValidUsername.includes(" ")) {
+      return NextResponse.json({
+        message: "Username tidak boleh mengandung spasi!",
+        success: false,
+      });
+    }
+
     const usernameValidation = await prisma.user.findUnique({
       where: {
-        username,
+        username: ValidUsername,
       },
     });
 

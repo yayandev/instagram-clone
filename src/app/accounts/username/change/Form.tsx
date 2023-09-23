@@ -87,7 +87,33 @@ const Form = () => {
           required
           placeholder="Username minimal 4 characters"
           value={values.username}
-          onChange={(e) => setValues({ ...values, username: e.target.value })}
+          onChange={async (e) => {
+            // rubah huruf menjadi kecil dan hapus space
+            setValues({
+              ...values,
+              username: e.target.value.toLowerCase().trim(),
+            });
+
+            // validasi kata berbahaya
+            let toxic: any = [];
+            const res = await axios.get("/kata-kasar.json");
+            toxic = res.data;
+
+            // munculkan msg ketika menekan space
+            if (e.target.value.includes(" ")) {
+              setNotif("text-red-600");
+              setMsg("username tidak boleh mengandung spasi!");
+            } else if (e.target.value.length < 4) {
+              setNotif("text-red-600");
+              setMsg("username minimal 4 karakter!");
+            } else if (toxic.includes(e.target.value.toLowerCase().trim())) {
+              setNotif("text-red-600");
+              setMsg("username tidak boleh mengandung kata-kata berbahaya!");
+            } else {
+              setNotif("text-green-600");
+              setMsg("");
+            }
+          }}
           className="disabled:bg-slate-200 p-2 border w-full md:w-[250px]  focus:outline-none"
         />
       </div>

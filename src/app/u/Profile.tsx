@@ -12,6 +12,7 @@ import useSWR from "swr";
 import Skeleton from "./Skeleton";
 import Media from "./Media";
 import { useModalSettings } from "@/context/ModalSettingsContext";
+import Verify from "@/components/verify/Verify";
 
 const Profile = ({ username }: { username: string }) => {
   const router = useRouter();
@@ -92,12 +93,15 @@ const Profile = ({ username }: { username: string }) => {
           width={150}
           height={150}
           alt="User"
-          className="rounded-full md:w-[150px] md:h-[150px] w-[65px] h-[65px]"
+          className="rounded-full md:w-[150px] md:h-[150px] w-[50px] h-[50px]"
         />
         <div>
-          <div className="gap-5 items-center flex">
+          <div className="gap-5 items-center flex flex-wrap">
             <div>
-              <h1 className="font-semibold text-lg">{data?.data?.username}</h1>
+              <h1 className="font-semibold text-lg flex gap-1 items-center">
+                <span>{data?.data?.username}</span>
+                {data?.data?.isVerify && <Verify />}
+              </h1>
             </div>
             {session && (
               <div>

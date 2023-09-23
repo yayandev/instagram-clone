@@ -5,6 +5,7 @@ import Link from "next/link";
 import Skeleton from "./Skeleton";
 import { fetcher } from "@/utils/swr/fetcher";
 import useSWR from "swr";
+import Verify from "../verify/Verify";
 const Me = () => {
   const { data: session, status }: any = useSession();
   const { data, error, isLoading } = useSWR(
@@ -24,10 +25,13 @@ const Me = () => {
           width={50}
           height={50}
           alt="Profile"
-          className="rounded-full"
+          className="rounded-full w-[50px] h-[50px]"
         />
         <div>
-          <h1 className="text-sm font-semibold">{data?.data?.username}</h1>
+          <h1 className="text-sm font-semibold flex items-center gap-1">
+            <span>{data?.data?.username}</span>
+            {data?.data?.isVerify && <Verify />}
+          </h1>
           <p className="text-xs">{data?.data?.name}</p>
         </div>
       </Link>

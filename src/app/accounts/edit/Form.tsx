@@ -61,9 +61,9 @@ const Form = ({ data }: any) => {
       <div className="flex gap-3 items-center">
         <Image
           src={values.image}
-          width={70}
-          height={70}
-          className="rounded-full"
+          width={100}
+          height={100}
+          className="rounded-full w-[70px] h-[70px]"
           alt="profile"
         />
 

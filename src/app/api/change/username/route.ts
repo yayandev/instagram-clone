@@ -14,6 +14,13 @@ export async function PUT(req: NextRequest) {
       });
     }
 
+    if (newUsername.includes(" ")) {
+      return NextResponse.json({
+        message: "Username tidak boleh mengandung spasi!",
+        success: false,
+      });
+    }
+
     const auth = await getServerSession();
 
     if (!auth) {
@@ -38,7 +45,7 @@ export async function PUT(req: NextRequest) {
 
     const users = await prisma.user.findMany({
       where: {
-        username: newUsername,
+        username: newUsername.toLocaleLowerCase(),
       },
     });
 
@@ -54,7 +61,7 @@ export async function PUT(req: NextRequest) {
         email: auth?.user?.email as string,
       },
       data: {
-        username: newUsername,
+        username: newUsername.toLocaleLowerCase(),
       },
     });
 

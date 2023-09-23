@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/utils/prisma/prisma";
 import bcryptjs from "bcryptjs";
-import { getServerSession } from "next-auth";
 export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
-    const { password, newPassword, confirmNewPassword } = body;
+    const { token, newPassword, confirmNewPassword } = body;
 
     if (newPassword.length < 8) {
       return NextResponse.json({
@@ -14,45 +13,22 @@ export async function PUT(req: NextRequest) {
       });
     }
 
-    const auth = await getServerSession();
-
-    if (!auth) {
-      return NextResponse.json({
-        message: "Unauthorized",
-        success: false,
-      });
-    }
-
-    const me = await prisma.user.findUnique({
+    const user = await prisma.user.findMany({
       where: {
-        email: auth?.user?.email as string,
+        token,
       },
     });
 
-    const isMatch = await bcryptjs.compare(password, me?.password as string);
-
-    if (!isMatch) {
+    if (user.length === 0) {
       return NextResponse.json({
-        message: "Kata sandi salah!",
+        message: "Token invalid!",
         success: false,
       });
     }
 
     if (newPassword !== confirmNewPassword) {
       return NextResponse.json({
-        message: "Konfirmasi kata sandi baru tidak sesuai!",
-        success: false,
-      });
-    }
-
-    const isMatch2 = await bcryptjs.compare(
-      newPassword,
-      me?.password as string
-    );
-
-    if (isMatch2) {
-      return NextResponse.json({
-        message: "Kata sandi baru tidak boleh sama dengan kata sandi lama!",
+        message: "Password tidak sama!",
         success: false,
       });
     }
@@ -61,10 +37,11 @@ export async function PUT(req: NextRequest) {
 
     await prisma.user.update({
       where: {
-        email: auth?.user?.email as string,
+        id: user[0].id,
       },
       data: {
         password: hashedPassword,
+        token: null,
       },
     });
 

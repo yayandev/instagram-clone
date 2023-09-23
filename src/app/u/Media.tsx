@@ -43,7 +43,7 @@ const Media = () => {
         <div className="w-full flex justify-center flex-wrap p-10 gap-3">
           <Link
             href={"#"}
-            className="border lg:w-[300px] lg:h-[300px] w-[100px] md:w-[150px] h-[100px] md:h-[150px] flex items-center justify-center bg-[url(/post.jpg)] bg-cover bg-center  rounded-sm"
+            className="border lg:w-[300px] lg:h-[300px] w-[100px] h-[100px]  flex items-center justify-center bg-[url(/post.jpg)] bg-cover bg-center  rounded-sm"
           >
             <div className="w-full h-full justify-center items-center hidden md:flex">
               <div className="flex gap-3">
@@ -58,7 +58,7 @@ const Media = () => {
           </Link>
           <Link
             href={"#"}
-            className="border lg:w-[300px] lg:h-[300px] w-[100px] md:w-[150px] h-[100px] md:h-[150px] flex items-center justify-center bg-[url(/post.jpg)] bg-cover bg-center  rounded-sm"
+            className="border lg:w-[300px] lg:h-[300px] w-[100px] h-[100px]  flex items-center justify-center bg-[url(/post.jpg)] bg-cover bg-center  rounded-sm"
           >
             <div className="w-full h-full justify-center items-center hidden md:flex">
               <div className="flex gap-3">
@@ -73,7 +73,7 @@ const Media = () => {
           </Link>
           <Link
             href={"#"}
-            className="border lg:w-[300px] lg:h-[300px] w-[100px] md:w-[150px] h-[100px] md:h-[150px] flex items-center justify-center bg-[url(/post.jpg)] bg-cover bg-center  rounded-sm"
+            className="border lg:w-[300px] lg:h-[300px] w-[100px] h-[100px]  flex items-center justify-center bg-[url(/post.jpg)] bg-cover bg-center  rounded-sm"
           >
             <div className="w-full h-full justify-center items-center hidden md:flex">
               <div className="flex gap-3">

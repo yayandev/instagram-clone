@@ -13,6 +13,7 @@ export async function GET(
         username: true,
         name: true,
         image: true,
+        isVerify: true,
       },
       where: {
         id: {
@@ -32,6 +33,9 @@ export async function GET(
         },
       },
       take: 5,
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     return NextResponse.json({
