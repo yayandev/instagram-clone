@@ -1,27 +1,18 @@
 "use client";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import Skeleton from "./Skeleton";
-import { fetcher } from "@/utils/swr/fetcher";
-import useSWR from "swr";
 import Verify from "../verify/Verify";
+import { useAuth } from "@/context/AuthContext";
 const Me = () => {
-  const { data: session, status }: any = useSession();
-  const { data, error, isLoading } = useSWR(
-    "/api/users?email=" + session?.user?.email,
-    fetcher
-  );
-  if (status === "loading" || isLoading) return <Skeleton />;
-  if (error) return <div>failed to load</div>;
+  const { user, status, loading }: any = useAuth();
+  if (status === "loading" || loading) return <Skeleton />;
   return (
     <div className="w-full flex justify-between gap-3 items-center">
-      <Link
-        href={`/u/${data?.data?.username}`}
-        className="flex items-center gap-3 "
-      >
+      <Link href={`/u/${user?.username}`} className="flex items-center gap-3 ">
         <Image
-          src={`${data?.data?.image}`}
+          src={`${user?.image}`}
           width={50}
           height={50}
           alt="Profile"
@@ -29,10 +20,10 @@ const Me = () => {
         />
         <div>
           <h1 className="text-sm font-semibold flex items-center gap-1">
-            <span>{data?.data?.username}</span>
-            {data?.data?.isVerify && <Verify />}
+            <span>{user?.username}</span>
+            {user?.isVerify && <Verify />}
           </h1>
-          <p className="text-xs">{data?.data?.name}</p>
+          <p className="text-xs">{user?.name}</p>
         </div>
       </Link>
       <div className="">

@@ -6,15 +6,13 @@ import React, { useState } from "react";
 import useSWR from "swr";
 import Skeleton from "./Skeleton";
 import axios from "axios";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import Verify from "../verify/Verify";
+import { useAuth } from "@/context/AuthContext";
 const SuggestionList = () => {
   const [isFollow, setIsFollow] = useState(false);
-  const router = useRouter();
-  const { data: session, status }: any = useSession();
+  const { user, status }: any = useAuth();
   const { data, error, isLoading, mutate } = useSWR(
-    `/api/suggestions/${session?.user?.id}`,
+    `/api/suggestions/${user?.id}`,
     fetcher
   );
   if (error) return <div>failed to load</div>;

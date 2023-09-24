@@ -1,11 +1,13 @@
 "use client";
+import { useAuth } from "@/context/AuthContext";
 import { useModalAddPost } from "@/context/ModalCreatePostContext";
 import Image from "next/image";
 import Link from "next/link";
 import { BsPlusSquare } from "react-icons/bs";
 import { FaFileVideo, FaHouse, FaSistrix } from "react-icons/fa6";
 
-const NavBottom = ({ user }: any) => {
+const NavBottom = () => {
+  const { user }: any = useAuth();
   const { setIsOpenModalAddPost } = useModalAddPost();
   return (
     <div className="md:hidden fixed bottom-0 w-full border-t-2 bg-white flex p-3 justify-between max-h-[60px]">

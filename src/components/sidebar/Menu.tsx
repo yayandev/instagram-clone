@@ -1,4 +1,5 @@
 "use client";
+import { useAuth } from "@/context/AuthContext";
 import { useModalAddPost } from "@/context/ModalCreatePostContext";
 import { useModalSettings } from "@/context/ModalSettingsContext";
 import { signIn } from "next-auth/react";
@@ -15,11 +16,12 @@ import {
   FaSistrix,
 } from "react-icons/fa6";
 
-const Menu = ({ data, status }: any) => {
+const Menu = () => {
   const { setIsOpenModalAddPost } = useModalAddPost();
   const { setIsOpen } = useModalSettings();
+  const { user, status }: any = useAuth();
 
-  if (status === "unauthenticated") {
+  if (status !== "authenticated") {
     return (
       <div className="flex w-full justify-center items-center">
         <button
@@ -76,11 +78,11 @@ const Menu = ({ data, status }: any) => {
         <FaRegSquarePlus /> <span className="lg:block hidden">Create</span>
       </button>
       <Link
-        href={`/u/${data?.data?.username}`}
+        href={`/u/${user?.username}`}
         className="flex gap-3 items-center justify-center lg:justify-start text-xl lg:text-lg  p-2 rounded-sm hover:bg-slate-200"
       >
         <Image
-          src={data?.data.image}
+          src={user?.image}
           width={32}
           height={32}
           alt="profile"

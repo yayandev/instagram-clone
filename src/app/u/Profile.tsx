@@ -2,7 +2,6 @@
 import Spinner from "@/components/spinner/Spinner";
 import { fetcher } from "@/utils/swr/fetcher";
 import axios from "axios";
-import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -13,8 +12,11 @@ import Skeleton from "./Skeleton";
 import Media from "./Media";
 import { useModalSettings } from "@/context/ModalSettingsContext";
 import Verify from "@/components/verify/Verify";
+import ClientOnly from "@/components/layout/ClientOnly";
+import { useAuth } from "@/context/AuthContext";
 
 const Profile = ({ username }: { username: string }) => {
+  const { user, status }: any = useAuth();
   const router = useRouter();
   const { setIsOpen } = useModalSettings();
   const { error, data, isLoading, mutate } = useSWR(
@@ -22,7 +24,6 @@ const Profile = ({ username }: { username: string }) => {
     fetcher
   );
   if (error) return <div>failed to load</div>;
-  const { data: session, status }: any = useSession();
   const [isProccesFollow, setIsProccesFollow] = useState(false);
   if (status === "loading" || isLoading) return <Skeleton />;
   if (data.data === null)
@@ -31,13 +32,10 @@ const Profile = ({ username }: { username: string }) => {
     );
   const url = `/u/${data?.data?.username}`;
 
-  // handle Follow
   const handleFollow = async () => {
     setIsProccesFollow(true);
     const res = await axios.get(`/api/follow/${data.data?.id}`);
     if (res.data.success) {
-      // setFollowing(true);
-      // router.refresh();
       mutate();
     }
     setIsProccesFollow(false);
@@ -47,15 +45,13 @@ const Profile = ({ username }: { username: string }) => {
     setIsProccesFollow(true);
     const res = await axios.get(`/api/unfollow/${data.data?.id}`);
     if (res.data.success) {
-      // setFollowing(true);
       mutate();
-      // router.refresh();
     }
     setIsProccesFollow(false);
   };
 
   const SectionOption = () => {
-    const isFollowing = data?.data?.followedByIDs.includes(session?.user?.id);
+    const isFollowing = data?.data?.followedByIDs.includes(user?.id);
 
     if (isFollowing) {
       return (
@@ -75,7 +71,9 @@ const Profile = ({ username }: { username: string }) => {
       <div className="w-full my-2">
         <button
           onClick={() =>
-            session ? handleFollow() : router.push(`/login?callbackUrl=${url}`)
+            status === "authenticated"
+              ? handleFollow()
+              : router.push(`/login?callbackUrl=${url}`)
           }
           disabled={isProccesFollow}
           className="disabled:opacity-70 px-5 py-1 bg-sky-500 text-white text-sm rounded"
@@ -103,9 +101,9 @@ const Profile = ({ username }: { username: string }) => {
                 {data?.data?.isVerify && <Verify />}
               </h1>
             </div>
-            {session && (
+            <ClientOnly>
               <div>
-                {session.user?.email === data?.data?.email && (
+                {user?.id === data?.data?.id && (
                   <div className="flex gap-3">
                     <Link
                       href={"/accounts/edit"}
@@ -125,10 +123,12 @@ const Profile = ({ username }: { username: string }) => {
                   </div>
                 )}
               </div>
-            )}
+            </ClientOnly>
           </div>
           <div>
-            {data?.data?.email !== session?.user.email && <SectionOption />}
+            <ClientOnly>
+              {data?.data?.id !== user?.id && <SectionOption />}
+            </ClientOnly>
           </div>
           <div className="flex items-center gap-3 my-3">
             <Link href={"#"} className="font-semibold">

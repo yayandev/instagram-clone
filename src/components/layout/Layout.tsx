@@ -3,37 +3,34 @@ import ModalAddPosts from "@/components/modal/add-posts/ModalAddPosts";
 import NavBottom from "@/components/nav-bottom/NavBottom";
 import NavTop from "@/components/nav-top/NavTop";
 import Sidebar from "@/components/sidebar/Sidebar";
-import { useSession } from "next-auth/react";
 import Spinner from "../spinner/Spinner";
-import { fetcher } from "@/utils/swr/fetcher";
-import useSWR from "swr";
 import ModalSetting from "../modal/settings/ModalSetting";
+import { useAuth } from "@/context/AuthContext";
+import ClientOnly from "./ClientOnly";
 
 function Layout({ children }: { children: React.ReactNode }) {
-  const { data: session, status } = useSession();
-  const { data, error, isLoading } = useSWR(
-    "/api/users?email=" + session?.user?.email,
-    fetcher
-  );
+  const { loading, user, status } = useAuth();
 
-  if (status === "loading" || isLoading) {
+  if (loading || status === "loading") {
     return (
       <div className="w-full h-screen flex justify-center items-center">
-        <Spinner />
+        <Spinner />;
       </div>
     );
   }
 
-  if (error) return <div>Server error</div>;
+  console.log({ loading, user, status });
 
   return (
     <main className="md:flex">
-      <NavTop session={session} />
-      <Sidebar data={data} status={status} />
-      <div className="min-h-screen py-9 px-5 md:px-10 w-full md:w-[80%]">
+      <NavTop />
+      <Sidebar />
+      <div className="min-h-screen py-9 px-5 md:px-10 w-full md:w-[80%] lg:max-w-[1024px]">
         {children}
       </div>
-      {session && <NavBottom user={data?.data} />}
+      <ClientOnly>
+        <NavBottom />
+      </ClientOnly>
       <ModalAddPosts />
       <ModalSetting />
     </main>

@@ -1,30 +1,23 @@
 "use client";
 import Spinner from "@/components/spinner/Spinner";
+import { useAuth } from "@/context/AuthContext";
 import { fetcher } from "@/utils/swr/fetcher";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import React, { SyntheticEvent, useState } from "react";
 import { BsArrow90DegLeft } from "react-icons/bs";
 import useSWR from "swr";
 
 const Form = () => {
-  const router = useRouter();
   const [msg, setMsg] = useState("");
   const [notif, setNotif] = useState("");
   const [isProccess, setisProccess] = useState(false);
   const [values, setValues] = useState({
     username: "",
   });
-  const { data: session, status }: any = useSession();
-  const { data, error, isLoading, mutate } = useSWR(
-    `/api/users?id=${session?.user?.id}`,
-    fetcher
-  );
-  if (error) return <div>Server Error!</div>;
-  if (status === "loading" || isLoading) return <Spinner />;
+  const { user, represh }: any = useAuth();
 
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
@@ -34,8 +27,7 @@ const Form = () => {
     });
 
     if (res.data.success) {
-      //   router.refresh();
-      mutate();
+      represh();
       setMsg(res.data.message);
       setNotif("text-green-600");
       setValues({
@@ -61,13 +53,13 @@ const Form = () => {
 
       <div className="flex gap-3 items-center">
         <Image
-          src={data?.data?.image}
+          src={user?.image}
           width={70}
           height={70}
           className="rounded-full w-[70px] h-[70px]"
           alt="profile"
         />
-        <div className="font-bold">{data?.data?.username}</div>
+        <div className="font-bold">{user?.username}</div>
       </div>
       {msg && (
         <div className="my-2">

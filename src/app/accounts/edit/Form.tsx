@@ -3,26 +3,26 @@ import Spinner from "@/components/spinner/Spinner";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { SyntheticEvent, useState } from "react";
 import { BsArrow90DegLeft } from "react-icons/bs";
 import { FaPencil } from "react-icons/fa6";
 import { CldUploadWidget } from "next-cloudinary";
-const Form = ({ data }: any) => {
+import { useAuth } from "@/context/AuthContext";
+const Form = () => {
+  const { represh, user }: any = useAuth();
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false);
   const [isLoadingUpload, setIsLoadingUpload] = useState(false);
-  const router = useRouter();
   const [msg, setMsg] = useState("");
   const [values, setValues] = useState({
-    bio: data.data.bio,
-    username: data.data.username,
-    email: data.data.email,
-    name: data.data.name,
-    image: data.data.image,
-    idImage: data.data.idImage,
+    bio: user?.bio,
+    username: user?.username,
+    email: user?.email,
+    name: user?.name,
+    image: user?.image,
+    idImage: user?.idImage,
   });
 
-  const [lastImage, setLastImage] = useState(data.data.idImage);
+  const [lastImage, setLastImage] = useState(user?.idImage);
 
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
@@ -35,7 +35,7 @@ const Form = ({ data }: any) => {
 
     if (res.data.success) {
       setMsg(res.data.message);
-      router.refresh();
+      represh();
     } else {
       setMsg(res.data.message);
     }
@@ -68,6 +68,12 @@ const Form = ({ data }: any) => {
         />
 
         <CldUploadWidget
+          options={{
+            maxFiles: 1,
+            singleUploadAutoClose: true,
+            clientAllowedFormats: ["jpg", "jpeg", "png"],
+            sources: ["local"],
+          }}
           onUpload={async (result: any) => {
             setIsLoadingUpload(true);
             const res = await axios.put("/api/change/image", {
@@ -78,8 +84,8 @@ const Form = ({ data }: any) => {
 
             if (res.data.success) {
               setMsg(res.data.message);
+              represh();
             }
-
             setValues({
               ...values,
               image: result.info.secure_url,

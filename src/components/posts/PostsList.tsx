@@ -45,7 +45,7 @@ const PostsList = () => {
   const { setIsOpenModalComments } = useModalComments();
   return (
     <>
-      <div className="w-full py-10 md:px-16 px-10">
+      <div className="w-full md:px-10 ">
         {posts.map((post) => (
           <div className="w-full my-2" key={post.id}>
             {/* header post */}

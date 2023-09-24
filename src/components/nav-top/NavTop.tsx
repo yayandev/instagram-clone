@@ -2,8 +2,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FaRegHeart, FaRegMessage } from "react-icons/fa6";
+import ClientOnly from "../layout/ClientOnly";
 
-const NavTop = ({ session }: any) => {
+const NavTop = () => {
   return (
     <>
       <div className="md:hidden max-h-[60px] fixed top-0 w-full border-b-2 bg-white p-2 flex items-center justify-between">
@@ -17,7 +18,7 @@ const NavTop = ({ session }: any) => {
             />
           </Link>
         </div>
-        {session && (
+        <ClientOnly>
           <div className="flex gap-3">
             <Link
               href={"#"}
@@ -32,7 +33,7 @@ const NavTop = ({ session }: any) => {
               <FaRegMessage />
             </Link>
           </div>
-        )}
+        </ClientOnly>
       </div>
       <div className="md:hidden h-[50px]"></div>
     </>

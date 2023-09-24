@@ -44,6 +44,7 @@ export async function GET(req: NextRequest) {
           id: true,
           name: true,
           image: true,
+          idImage: true,
           username: true,
           bio: true,
           isVerify: true,
