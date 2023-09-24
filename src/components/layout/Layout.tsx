@@ -9,7 +9,7 @@ import { useAuth } from "@/context/AuthContext";
 import ClientOnly from "./ClientOnly";
 
 function Layout({ children }: { children: React.ReactNode }) {
-  const { loading, user, status } = useAuth();
+  const { loading, status, error } = useAuth();
 
   if (loading || status === "loading") {
     return (
@@ -19,7 +19,13 @@ function Layout({ children }: { children: React.ReactNode }) {
     );
   }
 
-  console.log({ loading, user, status });
+  if (error) {
+    return (
+      <div className="w-full flex justify-center h-screen items-center">
+        <h1 className="font-bold text-xl">Koneksi Gagal!</h1>
+      </div>
+    );
+  }
 
   return (
     <main className="md:flex">

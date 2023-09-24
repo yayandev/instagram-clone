@@ -7,6 +7,7 @@ export const AuthContext = createContext({
   user: null,
   loading: true,
   status: "",
+  error: null,
   setUser: (value: any) => {
     user: value;
   },
@@ -42,6 +43,7 @@ export const AuhtProvider = ({ children }: { children: React.ReactNode }) => {
         user,
         loading,
         status,
+        error,
         setUser,
         represh: mutate,
       }}
