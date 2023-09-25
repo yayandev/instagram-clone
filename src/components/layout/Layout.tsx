@@ -14,7 +14,7 @@ function Layout({ children }: { children: React.ReactNode }) {
   if (loading || status === "loading") {
     return (
       <div className="w-full h-screen flex justify-center items-center">
-        <Spinner />;
+        <Spinner />
       </div>
     );
   }

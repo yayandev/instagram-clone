@@ -25,4 +25,15 @@ model User {
   followingIDs  String[] @db.ObjectId
   bio String?
   token String?
+  posts Post[]
+}
+
+model Post {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  images    String[]
+  caption   String
+  user User @relation(fields: [userID], references: [id])
+  userID    String @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

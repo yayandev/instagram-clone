@@ -7,7 +7,7 @@ import ClientOnly from "../layout/ClientOnly";
 const NavTop = () => {
   return (
     <>
-      <div className="md:hidden max-h-[60px] fixed top-0 w-full border-b-2 bg-white p-2 flex items-center justify-between">
+      <div className="md:hidden max-h-[60px] fixed top-0 w-full border-b-2 bg-white p-2 flex items-center justify-between z-50">
         <div>
           <Link href={"/"}>
             <Image

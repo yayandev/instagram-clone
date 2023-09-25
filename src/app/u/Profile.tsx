@@ -132,7 +132,8 @@ const Profile = ({ username }: { username: string }) => {
           </div>
           <div className="flex items-center gap-3 my-3">
             <Link href={"#"} className="font-semibold">
-              6 <span className="text-sm text-slate-700">posts</span>
+              {data?.data?._count.posts}{" "}
+              <span className="text-sm text-slate-700">posts</span>
             </Link>
             <Link href={"#"} className="font-semibold">
               {data?.data?._count.followedBy}{" "}
