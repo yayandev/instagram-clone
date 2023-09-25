@@ -3,6 +3,7 @@ import { createContext, useContext, useState } from "react";
 
 export const ModalAddPostContext = createContext({
   isOpenModalAddPost: false,
+
   setIsOpenModalAddPost: (isOpenModalAddPost: boolean) => {
     isOpenModalAddPost: isOpenModalAddPost;
   },

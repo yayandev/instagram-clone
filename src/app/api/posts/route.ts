@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/utils/prisma/prisma";
 import { uploadPhoto } from "@/utils/cloudinary/uploadPhoto";
 import { getServerSession } from "next-auth";
+import { v2 as cloudinary } from "cloudinary";
+import { config } from "@/utils/cloudinary/config";
+cloudinary.config(config);
 
 export async function POST(req: NextRequest) {
   const auth: any = await getServerSession();
@@ -102,6 +105,7 @@ export async function GET(req: NextRequest) {
       include: {
         user: {
           select: {
+            id: true,
             name: true,
             image: true,
             isVerify: true,
@@ -112,13 +116,105 @@ export async function GET(req: NextRequest) {
       orderBy: {
         createdAt: "desc",
       },
-      take: 5,
+      // take: 5,
     });
 
     return NextResponse.json({
       data: posts,
       message: "success",
       success: true,
+    });
+  } catch (error: any) {
+    return NextResponse.json({
+      message: error.message,
+      success: false,
+    });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  const auth: any = await getServerSession();
+
+  if (!auth) {
+    return NextResponse.json({
+      message: "Unauthorized",
+      success: false,
+    });
+  }
+
+  const me: any = await prisma.user.findUnique({
+    where: {
+      email: auth.user.email,
+    },
+  });
+
+  const userID = me.id;
+  try {
+    const postId = req.nextUrl.searchParams.get("post_id");
+    if (!postId) {
+      return NextResponse.json({
+        message: "Post id is required",
+        success: false,
+      });
+    }
+    const post: any = await prisma.post.findUnique({
+      where: {
+        id: postId!,
+      },
+    });
+
+    if (!post) {
+      return NextResponse.json({
+        message: "Post not found",
+        success: false,
+      });
+    }
+
+    if (post.userID !== userID) {
+      return NextResponse.json({
+        message: "Unauthorized",
+        success: false,
+      });
+    }
+
+    let images = JSON.parse(post.images);
+
+    let public_id = [];
+
+    for (let i = 0; i < images.length; i++) {
+      public_id.push(images[i].public_id);
+    }
+
+    let res;
+
+    if (public_id.length > 1) {
+      res = await cloudinary.api.delete_resources(public_id);
+      if (res.success === false) {
+        return NextResponse.json({
+          message: "cloudinary error",
+          success: false,
+        });
+      }
+    } else {
+      res = await cloudinary.uploader.destroy(public_id[0]);
+      if (res.success === false) {
+        return NextResponse.json({
+          message: "cloudinary error",
+          success: false,
+        });
+      }
+    }
+
+    await prisma.post.delete({
+      where: {
+        id: postId!,
+      },
+    });
+
+    return NextResponse.json({
+      message: "Posts deleted successfully",
+      success: true,
+      res,
     });
   } catch (error: any) {
     return NextResponse.json({

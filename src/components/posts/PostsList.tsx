@@ -20,6 +20,8 @@ import { useModalComments } from "@/context/ModalCommentsContext";
 import useSWR from "swr";
 import { fetcher } from "@/utils/swr/fetcher";
 import { useRef } from "react";
+import { useModalAddPost } from "@/context/ModalCreatePostContext";
+import Verify from "../verify/Verify";
 const settings: Settings = {
   dots: true,
   infinite: true,
@@ -30,11 +32,33 @@ const settings: Settings = {
 
 const PostsList = () => {
   let imageSliderRef: any = useRef<Slider | null>(null);
-  const { setIsOpen } = useModalPostOptions();
+  const { setIsOpen, setPostId, setAuthor } = useModalPostOptions();
+  const { setIsOpenModalAddPost } = useModalAddPost();
   const { setIsOpenModalComments } = useModalComments();
   const { data, isLoading, error } = useSWR("/api/posts", fetcher);
 
   if (isLoading) return <h1>loading...</h1>;
+
+  if (data?.data?.length === 0) {
+    return (
+      <div className="w-full my-3 flex justify-center  p-3 rounded border-2">
+        <div className="">
+          <p className="font-semibold">
+            Buat postingan pertama anda atau cari teman anda!
+          </p>
+          <div className="flex mt-2 gap-2">
+            <button
+              className="p-2 border text-sm"
+              onClick={() => setIsOpenModalAddPost(true)}
+            >
+              Create post
+            </button>
+            <button className="p-2 border text-sm">Search for friends</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <>
       <div className="w-full md:px-10 ">
@@ -55,8 +79,12 @@ const PostsList = () => {
                     />
                   </Link>
                   <h3 className="text-sm font-semibold flex items-center gap-1">
-                    <Link href={`/u/${post.user.username}`}>
-                      {post.user.username}
+                    <Link
+                      href={`/u/${post.user.username}`}
+                      className="flex items-center gap-1"
+                    >
+                      <div>{post.user.username}</div>
+                      {post.user.isVerify && <Verify />}
                     </Link>{" "}
                     <BsDot />{" "}
                     <span className="font-semibold text-sm text-slate-400">
@@ -66,7 +94,11 @@ const PostsList = () => {
                 </div>
                 <button
                   className="font-bold text-lg"
-                  onClick={() => setIsOpen(true)}
+                  onClick={() => {
+                    setAuthor(post.user);
+                    setPostId(post.id);
+                    setIsOpen(true);
+                  }}
                 >
                   <BsThreeDots />
                 </button>
