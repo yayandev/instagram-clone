@@ -121,6 +121,11 @@ export async function GET(req: NextRequest) {
               username: true,
             },
           },
+          likes: {
+            select: {
+              userID: true,
+            },
+          },
         },
         orderBy: {
           createdAt: "desc",
@@ -243,6 +248,13 @@ export async function DELETE(req: NextRequest) {
         });
       }
     }
+
+    // delete comments
+    await prisma.comment.deleteMany({
+      where: {
+        postID: postId!,
+      },
+    });
 
     await prisma.post.delete({
       where: {

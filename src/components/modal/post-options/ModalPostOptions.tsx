@@ -34,7 +34,7 @@ const ModalPostOptions = () => {
     if (data.success) {
       setNotif("text-green-500");
       setMsg(data.message);
-      router.refresh();
+      router.push("/");
     } else {
       setNotif("text-red-500");
       setMsg(data.message);

@@ -29,14 +29,17 @@ const Header = ({ data }: any) => {
         <div>
           <button
             onClick={() => {
-              setAuthor(data.user);
-              setPostId(data.id);
+              setAuthor(data?.user);
+              setPostId(data?.id);
               setIsOpen(true);
             }}
           >
             <BsThreeDots />
           </button>
         </div>
+      </div>
+      <div className="w-full my-3">
+        <p className="text-xs">{data.caption}</p>
       </div>
     </div>
   );

@@ -8,6 +8,7 @@ import useSWR from "swr";
 import { useState } from "react";
 import { BsChat, BsHeart, BsSend } from "react-icons/bs";
 import axios from "axios";
+import Likes from "./Likes";
 const Comments = ({ postId, count }: { postId: string; count: any }) => {
   const [comment, setComment] = useState("");
   const [isProccess, setisProccess] = useState(false);
@@ -67,12 +68,7 @@ const Comments = ({ postId, count }: { postId: string; count: any }) => {
     <div className="w-full">
       <div className="w-full border-b mt-2">
         <div className="flex gap-3 text-sm">
-          <span className="flex gap-1 items-center">
-            <button>
-              <BsHeart />
-            </button>
-            <span>10 likes</span>
-          </span>
+          <Likes postId={postId} />
           <span className="flex gap-1 items-center">
             <BsChat /> <span>{count.comments} comments</span>
           </span>

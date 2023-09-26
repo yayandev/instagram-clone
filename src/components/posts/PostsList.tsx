@@ -8,6 +8,7 @@ import {
   BsChat,
   BsDot,
   BsHeart,
+  BsHeartFill,
   BsSend,
   BsThreeDots,
 } from "react-icons/bs";
@@ -16,14 +17,16 @@ import Link from "next/link";
 import ModalPostOptions from "../modal/post-options/ModalPostOptions";
 import { useModalPostOptions } from "@/context/ModalPostOptionsContext";
 import ModalComments from "../modal/comments/ModalComments";
-import { useModalComments } from "@/context/ModalCommentsContext";
 import useSWR from "swr";
 import { fetcher } from "@/utils/swr/fetcher";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useModalAddPost } from "@/context/ModalCreatePostContext";
 import Verify from "../verify/Verify";
 import Spinner from "../spinner/Spinner";
 import Skeleton from "./Skeleton";
+import { useAuth } from "@/context/AuthContext";
+import { LikePost } from "@/hooks/LikePost";
+import { Dislike } from "@/hooks/Dislike";
 const settings: Settings = {
   dots: true,
   infinite: true,
@@ -33,10 +36,13 @@ const settings: Settings = {
 };
 
 const PostsList = () => {
+  const { user }: any = useAuth();
   let imageSliderRef: any = useRef<Slider | null>(null);
   const { setIsOpen, setPostId, setAuthor } = useModalPostOptions();
   const { setIsOpenModalAddPost } = useModalAddPost();
   const [isLoad, setIsLoad] = useState(false);
+  const [isLike, setIsLike] = useState(false);
+  const [isDislike, setIsDislike] = useState(false);
   const [take, setTake] = useState(5);
   const { data, isLoading, error, mutate } = useSWR(
     `/api/posts?take=${take}`,
@@ -54,32 +60,29 @@ const PostsList = () => {
     );
   }
 
-  // if (data?.data?.length === 0) {
-  //   return (
-  //     <div className="w-full my-3 flex justify-center  p-3 rounded border-2">
-  //       <div className="">
-  //         <p className="font-semibold">
-  //           Buat postingan pertama anda atau cari teman anda!
-  //         </p>
-  //         <div className="flex mt-2 gap-2">
-  //           <button
-  //             className="p-2 border text-sm"
-  //             onClick={() => setIsOpenModalAddPost(true)}
-  //           >
-  //             Create post
-  //           </button>
-  //           <button className="p-2 border text-sm">Search for friends</button>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  const handleLike = async (postId: string) => {
+    setIsLike(true);
+    const data = await LikePost(postId);
+    mutate();
+    setIsLike(false);
+  };
+
+  const handleDislike = async (postId: string) => {
+    setIsDislike(true);
+    const data = await Dislike(postId);
+    mutate();
+    setIsDislike(false);
+  };
 
   return (
     <div className="w-full">
       <div className="w-full md:px-10 ">
         {data?.data.map((post: any, index: number) => {
           let images = JSON.parse(post.images);
+          let likes: any = [];
+          post.likes.map((like: any) => {
+            likes.push(like.userID);
+          });
           return (
             <div className="w-full my-2" key={index}>
               {/* header post */}
@@ -141,9 +144,23 @@ const PostsList = () => {
               {/* menu post */}
               <div className="w-full flex justify-between items-center">
                 <div className="flex gap-4 items-center">
-                  <button className="text-xl font-bold">
-                    <BsHeart />
-                  </button>
+                  {likes.includes(user?.id) ? (
+                    <button
+                      disabled={isDislike}
+                      onClick={() => handleDislike(post.id)}
+                      className="text-xl font-bold text-pink-700"
+                    >
+                      {isDislike ? <Spinner /> : <BsHeartFill />}
+                    </button>
+                  ) : (
+                    <button
+                      disabled={isLike}
+                      onClick={() => handleLike(post.id)}
+                      className="text-xl font-bold"
+                    >
+                      {isLike ? <Spinner /> : <BsHeart />}
+                    </button>
+                  )}
                   <Link
                     href={`/p/${post.id}`}
                     className="text-xl font-bold text-center flex gap-1 items-center"
@@ -164,7 +181,11 @@ const PostsList = () => {
               {/* like post */}
               <div className="w-full my-2">
                 <div className="flex gap-3">
-                  <button className="text-sm font-bold">10 likes</button>
+                  {post._count.likes > 0 && (
+                    <Link href={`/p/${post.id}`} className="text-sm font-bold">
+                      {post._count.likes} likes
+                    </Link>
+                  )}
                   {post._count.comments > 0 && (
                     <Link href={`/p/${post.id}`} className="text-sm font-bold">
                       {post._count.comments} comments
@@ -181,16 +202,18 @@ const PostsList = () => {
           );
         })}
       </div>
-      <div className="w-full flex justify-center mt-5 mb-10">
-        <button
-          onClick={() => {
-            setTake(take + 5);
-          }}
-          className="text-sm p-2 rounded border"
-        >
-          {isLoad ? <Spinner /> : "More"}
-        </button>
-      </div>
+      {data?.data?.length > 0 && (
+        <div className="w-full flex justify-center mt-5 mb-10">
+          <button
+            onClick={() => {
+              setTake(take + 5);
+            }}
+            className="text-sm p-2 rounded border"
+          >
+            {isLoad ? <Spinner /> : "More"}
+          </button>
+        </div>
+      )}
       <ModalComments />
       <ModalPostOptions />
     </div>
