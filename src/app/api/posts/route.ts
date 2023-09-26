@@ -72,37 +72,79 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const auth: any = await getServerSession();
+    const postId = req.nextUrl.searchParams.get("post_id");
+    if (!postId) {
+      const auth: any = await getServerSession();
 
-    if (!auth) {
+      if (!auth) {
+        return NextResponse.json({
+          message: "Unauthorized",
+          success: false,
+        });
+      }
+
+      const me: any = await prisma.user.findUnique({
+        where: {
+          email: auth.user.email,
+        },
+      });
+
+      const take = req.nextUrl.searchParams.get("take") || 5;
+
+      const userID = me.id;
+
+      const posts = await prisma.post.findMany({
+        where: {
+          OR: [
+            {
+              userID: {
+                in: me?.followingIDs,
+              },
+            },
+            {
+              userID: userID,
+            },
+          ],
+        },
+        select: {
+          id: true,
+          caption: true,
+          images: true,
+          userID: true,
+          _count: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+              isVerify: true,
+              username: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: Number(take),
+      });
+
       return NextResponse.json({
-        message: "Unauthorized",
-        success: false,
+        data: posts,
+        message: "success",
+        success: true,
       });
     }
 
-    const me: any = await prisma.user.findUnique({
+    const post = await prisma.post.findUnique({
       where: {
-        email: auth.user.email,
+        id: postId,
       },
-    });
-
-    const userID = me.id;
-
-    const posts = await prisma.post.findMany({
-      where: {
-        OR: [
-          {
-            userID: {
-              in: me?.followingIDs,
-            },
-          },
-          {
-            userID: userID,
-          },
-        ],
-      },
-      include: {
+      select: {
+        id: true,
+        caption: true,
+        images: true,
+        userID: true,
+        _count: true,
         user: {
           select: {
             id: true,
@@ -112,15 +154,12 @@ export async function GET(req: NextRequest) {
             username: true,
           },
         },
+        createdAt: true,
       },
-      orderBy: {
-        createdAt: "desc",
-      },
-      // take: 5,
     });
 
     return NextResponse.json({
-      data: posts,
+      data: post,
       message: "success",
       success: true,
     });

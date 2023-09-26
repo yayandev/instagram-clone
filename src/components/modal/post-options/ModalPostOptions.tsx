@@ -80,7 +80,15 @@ const ModalPostOptions = () => {
           </div>
         )}
         <button className="border-b-2 p-2 text-sm">Add to favorites</button>
-        <button className="border-b-2 p-2 text-sm">Go to post</button>
+        <button
+          className="border-b-2 p-2 text-sm"
+          onClick={() => {
+            router.push(`/p/${postId}`);
+            setIsOpen(false);
+          }}
+        >
+          Go to post
+        </button>
         <button className="border-b-2 p-2 text-sm">Share to...</button>
         <button className="border-b-2 p-2 text-sm">Copy link</button>
         <Link

@@ -19,9 +19,11 @@ import ModalComments from "../modal/comments/ModalComments";
 import { useModalComments } from "@/context/ModalCommentsContext";
 import useSWR from "swr";
 import { fetcher } from "@/utils/swr/fetcher";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useModalAddPost } from "@/context/ModalCreatePostContext";
 import Verify from "../verify/Verify";
+import Spinner from "../spinner/Spinner";
+import Skeleton from "./Skeleton";
 const settings: Settings = {
   dots: true,
   infinite: true,
@@ -34,33 +36,47 @@ const PostsList = () => {
   let imageSliderRef: any = useRef<Slider | null>(null);
   const { setIsOpen, setPostId, setAuthor } = useModalPostOptions();
   const { setIsOpenModalAddPost } = useModalAddPost();
-  const { setIsOpenModalComments } = useModalComments();
-  const { data, isLoading, error } = useSWR("/api/posts", fetcher);
+  const [isLoad, setIsLoad] = useState(false);
+  const [take, setTake] = useState(5);
+  const { data, isLoading, error, mutate } = useSWR(
+    `/api/posts?take=${take}`,
+    fetcher
+  );
 
-  if (isLoading) return <h1>loading...</h1>;
-
-  if (data?.data?.length === 0) {
+  if (isLoading) {
     return (
-      <div className="w-full my-3 flex justify-center  p-3 rounded border-2">
-        <div className="">
-          <p className="font-semibold">
-            Buat postingan pertama anda atau cari teman anda!
-          </p>
-          <div className="flex mt-2 gap-2">
-            <button
-              className="p-2 border text-sm"
-              onClick={() => setIsOpenModalAddPost(true)}
-            >
-              Create post
-            </button>
-            <button className="p-2 border text-sm">Search for friends</button>
-          </div>
-        </div>
+      <div className="w-full mt-5">
+        <Skeleton />
+        <Skeleton />
+        <Skeleton />
+        <Skeleton />
       </div>
     );
   }
+
+  // if (data?.data?.length === 0) {
+  //   return (
+  //     <div className="w-full my-3 flex justify-center  p-3 rounded border-2">
+  //       <div className="">
+  //         <p className="font-semibold">
+  //           Buat postingan pertama anda atau cari teman anda!
+  //         </p>
+  //         <div className="flex mt-2 gap-2">
+  //           <button
+  //             className="p-2 border text-sm"
+  //             onClick={() => setIsOpenModalAddPost(true)}
+  //           >
+  //             Create post
+  //           </button>
+  //           <button className="p-2 border text-sm">Search for friends</button>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
+
   return (
-    <>
+    <div className="w-full">
       <div className="w-full md:px-10 ">
         {data?.data.map((post: any, index: number) => {
           let images = JSON.parse(post.images);
@@ -128,12 +144,15 @@ const PostsList = () => {
                   <button className="text-xl font-bold">
                     <BsHeart />
                   </button>
-                  <button
-                    className="text-xl font-bold"
-                    onClick={() => setIsOpenModalComments(true)}
+                  <Link
+                    href={`/p/${post.id}`}
+                    className="text-xl font-bold text-center flex gap-1 items-center"
                   >
+                    {post._count.comments > 0 && (
+                      <span className="text-sm">{post._count.comments}</span>
+                    )}
                     <BsChat />
-                  </button>
+                  </Link>
                   <button className="text-xl font-bold">
                     <BsSend />
                   </button>
@@ -144,7 +163,14 @@ const PostsList = () => {
               </div>
               {/* like post */}
               <div className="w-full my-2">
-                <button className="text-sm font-bold">10 likes</button>
+                <div className="flex gap-3">
+                  <button className="text-sm font-bold">10 likes</button>
+                  {post._count.comments > 0 && (
+                    <Link href={`/p/${post.id}`} className="text-sm font-bold">
+                      {post._count.comments} comments
+                    </Link>
+                  )}
+                </div>
                 <div className="my-1">
                   <p>{post.caption}</p>
                 </div>
@@ -155,9 +181,19 @@ const PostsList = () => {
           );
         })}
       </div>
+      <div className="w-full flex justify-center mt-5 mb-10">
+        <button
+          onClick={() => {
+            setTake(take + 5);
+          }}
+          className="text-sm p-2 rounded border"
+        >
+          {isLoad ? <Spinner /> : "More"}
+        </button>
+      </div>
       <ModalComments />
       <ModalPostOptions />
-    </>
+    </div>
   );
 };
 

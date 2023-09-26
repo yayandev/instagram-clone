@@ -26,6 +26,7 @@ model User {
   bio String?
   token String?
   posts Post[]
+  comments Comment[]
 }
 
 model Post {
@@ -34,6 +35,18 @@ model Post {
   caption   String
   user User @relation(fields: [userID], references: [id])
   userID    String @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  comments Comment[]
+}
+
+model Comment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  comment   String
+  user User @relation(fields: [userID], references: [id])
+  userID    String @db.ObjectId
+  post Post @relation(fields: [postID], references: [id])
+  postID    String @db.ObjectId
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
