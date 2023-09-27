@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { FaRegHeart, FaRegMessage } from "react-icons/fa6";
 import ClientOnly from "../layout/ClientOnly";
+import PublicOnly from "../layout/PublicOnly";
 
 const NavTop = () => {
   return (
@@ -34,6 +35,11 @@ const NavTop = () => {
             </Link>
           </div>
         </ClientOnly>
+        <PublicOnly>
+          <button className="py-2 px-5 rounded bg-sky-500 text-white">
+            Sign in
+          </button>
+        </PublicOnly>
       </div>
       <div className="md:hidden h-[50px]"></div>
     </>

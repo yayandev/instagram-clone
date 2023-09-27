@@ -1,4 +1,5 @@
 "use client";
+import ClientOnly from "@/components/layout/ClientOnly";
 import Verify from "@/components/verify/Verify";
 import { useModalPostOptions } from "@/context/ModalPostOptionsContext";
 import Image from "next/image";
@@ -27,15 +28,17 @@ const Header = ({ data }: any) => {
           </div>
         </div>
         <div>
-          <button
-            onClick={() => {
-              setAuthor(data?.user);
-              setPostId(data?.id);
-              setIsOpen(true);
-            }}
-          >
-            <BsThreeDots />
-          </button>
+          <ClientOnly>
+            <button
+              onClick={() => {
+                setAuthor(data?.user);
+                setPostId(data?.id);
+                setIsOpen(true);
+              }}
+            >
+              <BsThreeDots />
+            </button>
+          </ClientOnly>
         </div>
       </div>
       <div className="w-full my-3">

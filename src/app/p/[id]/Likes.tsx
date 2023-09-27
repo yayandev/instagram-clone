@@ -1,10 +1,13 @@
 "use client";
 
+import ClientOnly from "@/components/layout/ClientOnly";
+import PublicOnly from "@/components/layout/PublicOnly";
 import Spinner from "@/components/spinner/Spinner";
 import { useAuth } from "@/context/AuthContext";
 import { Dislike } from "@/hooks/Dislike";
 import { LikePost } from "@/hooks/LikePost";
 import { fetcher } from "@/utils/swr/fetcher";
+import Link from "next/link";
 import { useState } from "react";
 import { BsHeart, BsHeartFill } from "react-icons/bs";
 import useSWR from "swr";
@@ -40,25 +43,35 @@ const Likes = ({ postId }: { postId: string }) => {
   };
   return (
     <>
-      {likes.includes(user.id) ? (
+      <ClientOnly>
+        {likes.includes(user?.id) ? (
+          <span className="flex gap-1 items-center">
+            <button
+              onClick={() => handleDislike(postId)}
+              disabled={isDislike}
+              className="text-pink-600"
+            >
+              {isDislike ? <Spinner /> : <BsHeartFill />}
+            </button>
+            <span>{data?.data?._count?.likes} likes</span>
+          </span>
+        ) : (
+          <span className="flex gap-1 items-center">
+            <button onClick={() => handleLike(postId)} disabled={isLike}>
+              {isLike ? <Spinner /> : <BsHeart />}
+            </button>
+            <span>{data?.data?._count?.likes} likes</span>
+          </span>
+        )}
+      </ClientOnly>
+      <PublicOnly>
         <span className="flex gap-1 items-center">
-          <button
-            onClick={() => handleDislike(postId)}
-            disabled={isDislike}
-            className="text-pink-600"
-          >
-            {isDislike ? <Spinner /> : <BsHeartFill />}
-          </button>
+          <Link href={"/login?callbackUrl=/p/" + postId}>
+            <BsHeart />
+          </Link>
           <span>{data?.data?._count?.likes} likes</span>
         </span>
-      ) : (
-        <span className="flex gap-1 items-center">
-          <button onClick={() => handleLike(postId)} disabled={isLike}>
-            {isLike ? <Spinner /> : <BsHeart />}
-          </button>
-          <span>{data?.data?._count?.likes} likes</span>
-        </span>
-      )}
+      </PublicOnly>
     </>
   );
 };

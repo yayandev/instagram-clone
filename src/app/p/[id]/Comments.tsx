@@ -6,9 +6,10 @@ import { fetcher } from "@/utils/swr/fetcher";
 import Image from "next/image";
 import useSWR from "swr";
 import { useState } from "react";
-import { BsChat, BsHeart, BsSend } from "react-icons/bs";
+import { BsChat, BsSend } from "react-icons/bs";
 import axios from "axios";
 import Likes from "./Likes";
+import ClientOnly from "@/components/layout/ClientOnly";
 const Comments = ({ postId, count }: { postId: string; count: any }) => {
   const [comment, setComment] = useState("");
   const [isProccess, setisProccess] = useState(false);
@@ -73,21 +74,25 @@ const Comments = ({ postId, count }: { postId: string; count: any }) => {
             <BsChat /> <span>{data.data.length} comments</span>
           </span>
         </div>
-        <div className="w-full mt-2 flex justify-between text-sm">
-          <input
-            type="text"
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            className="w-[90%] focus:outline-none"
-            placeholder="Enter your comment"
-            onKeyDown={handleKeyDown}
-          />
-          <button onClick={handleComment} disabled={isProccess}>
-            {isProccess ? <Spinner /> : <BsSend />}
-          </button>
-        </div>
+        <ClientOnly>
+          <div className="w-full mt-2 flex justify-between text-sm">
+            <input
+              type="text"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              className="w-[90%] focus:outline-none"
+              placeholder="Enter your comment"
+              onKeyDown={handleKeyDown}
+            />
+            <button onClick={handleComment} disabled={isProccess}>
+              {isProccess ? <Spinner /> : <BsSend />}
+            </button>
+          </div>
+        </ClientOnly>
       </div>
-      <ModalPostOptions />
+      <ClientOnly>
+        <ModalPostOptions />
+      </ClientOnly>
       <div className="w-full">
         {data.data.map((result: any, index: number) => (
           <div
