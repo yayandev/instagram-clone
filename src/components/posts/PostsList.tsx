@@ -83,7 +83,7 @@ const PostsList = () => {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full mb-10">
       <div className="w-full md:px-10 ">
         {data?.data.map((post: any, index: number) => {
           let likes: any = [];
@@ -197,7 +197,7 @@ const PostsList = () => {
                 </div>
               </div>
               {/* form comment */}
-              <FormComment />
+              <FormComment postId={post.id} />
             </div>
           );
         })}

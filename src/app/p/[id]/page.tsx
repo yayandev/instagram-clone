@@ -4,7 +4,6 @@ import { Metadata } from "next";
 import Images from "./Images";
 import Header from "./Header";
 import Comments from "./Comments";
-import ClientOnly from "@/components/layout/ClientOnly";
 
 type Props = {
   params: { id: string };
