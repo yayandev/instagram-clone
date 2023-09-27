@@ -74,11 +74,18 @@ const PostsList = () => {
     setIsDislike(false);
   };
 
+  if (data?.data?.length === 0) {
+    return (
+      <div className="w-full mt-5">
+        <h1 className="text-2xl text-center">No posts found!</h1>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full">
       <div className="w-full md:px-10 ">
         {data?.data.map((post: any, index: number) => {
-          let images = JSON.parse(post.images);
           let likes: any = [];
           post.likes.map((like: any) => {
             likes.push(like.userID);
@@ -124,22 +131,15 @@ const PostsList = () => {
               </div>
               {/* media post */}
               <div className="w-full flex justify-center my-3">
-                <Slider
-                  {...settings}
-                  ref={imageSliderRef}
-                  className="w-full max-h-[350px] object-contain"
-                >
-                  {images.map((image: any, index: number) => (
-                    <Image
-                      key={index}
-                      src={image.secure_url}
-                      width={300}
-                      height={250}
-                      className="w-full max-h-[350px] object-contain"
-                      alt="Post"
-                    />
-                  ))}
-                </Slider>
+                <div className="w-full max-h-[350px] object-contain">
+                  <Image
+                    src={post.images}
+                    width={300}
+                    height={250}
+                    className="w-full max-h-[350px] object-contain"
+                    alt="Post"
+                  />
+                </div>
               </div>
               {/* menu post */}
               <div className="w-full flex justify-between items-center">
@@ -202,7 +202,7 @@ const PostsList = () => {
           );
         })}
       </div>
-      {data?.data?.length > 0 && (
+      {data?.nextPage && (
         <div className="w-full flex justify-center mt-5 mb-10">
           <button
             onClick={() => {

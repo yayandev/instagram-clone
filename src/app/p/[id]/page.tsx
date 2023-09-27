@@ -21,11 +21,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   } else {
     const title = res.data.data.caption;
     const username = res.data.data.user.username;
-    let images = JSON.parse(res.data.data.images);
     return {
       title: username + " | " + title,
       openGraph: {
-        images: [{ url: images[0].secure_url }],
+        images: [{ url: res.data.images }],
       },
     };
   }
@@ -34,8 +33,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 const getData = async (id: string) => {
   const res = await axios.get(`${process.env.DOMAIN}/api/posts?post_id=${id}`);
   let data = res.data.data;
-  let images = JSON.parse(data.images);
-  data.images = images;
   return data;
 };
 
@@ -49,7 +46,7 @@ const PostDetailPage = async ({ params }: { params: { id: string } }) => {
         <div className="sm:w-[48%] w-full">
           <Images images={data.images} />
         </div>
-        <div className="w-full sm:w-[50%]">
+        <div className="w-full sm:w-[50%] mt-5 sm:mt-0">
           <Header data={data} />
           <Comments postId={data.id} count={data._count} />
         </div>

@@ -32,18 +32,16 @@ const ModalPostOptions = () => {
     const data = await DeletePost(postId);
     setIsDeleted(false);
     if (data.success) {
-      setNotif("text-green-500");
-      setMsg(data.message);
+      setNotif("");
+      setMsg("");
+      setNotif("");
+      setMsg("");
       router.push("/");
+      setIsOpen(false);
     } else {
       setNotif("text-red-500");
       setMsg(data.message);
     }
-    setTimeout(() => {
-      setNotif("");
-      setMsg("");
-      setIsOpen(false);
-    }, 2000);
   };
 
   return (

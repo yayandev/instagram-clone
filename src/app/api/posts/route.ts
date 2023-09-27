@@ -1,66 +1,73 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/utils/prisma/prisma";
-import { uploadPhoto } from "@/utils/cloudinary/uploadPhoto";
 import { getServerSession } from "next-auth";
 import { v2 as cloudinary } from "cloudinary";
 import { config } from "@/utils/cloudinary/config";
+import { uploadOnePhoto } from "@/utils/cloudinary/uploadOnePhoto";
 cloudinary.config(config);
 
 export async function POST(req: NextRequest) {
-  const auth: any = await getServerSession();
-
-  if (!auth) {
-    return NextResponse.json({
-      message: "Unauthorized",
-      success: false,
-    });
-  }
-
-  const me: any = await prisma.user.findMany({
-    where: {
-      email: auth.user.email,
-    },
-  });
-
-  const userID = me[0].id;
-
   try {
-    const formData = await req.formData();
+    const auth: any = await getServerSession();
 
-    const caption = formData.get("caption");
-
-    if (!caption) {
+    if (!auth) {
       return NextResponse.json({
-        message: "Caption is required",
+        message: "Unauthorized",
         success: false,
       });
     }
 
-    const files = formData.get("files");
+    const me: any = await prisma.user.findMany({
+      where: {
+        email: auth.user.email,
+      },
+    });
 
-    if (!files) {
+    const userID = me[0].id;
+
+    if (!userID) {
       return NextResponse.json({
-        message: "File is required",
+        message: "Unauthorized",
         success: false,
       });
     }
 
-    const imagesUploadToCloudinary = await uploadPhoto(formData);
+    let formData = await req.formData();
+    let caption = formData.get("caption");
+    let images = formData.get("file");
 
-    const images = imagesUploadToCloudinary.photos;
+    if (!caption || !images) {
+      return NextResponse.json({
+        message: "All fields are required",
+        success: false,
+      });
+    }
+
+    const resultCloudiary = await uploadOnePhoto(formData);
+
+    if (resultCloudiary.error) {
+      return NextResponse.json({
+        message: resultCloudiary.error,
+        success: false,
+      });
+    }
+
+    const idImage = resultCloudiary.photo?.public_id;
+    const urlImage = resultCloudiary.photo?.secure_url;
 
     const newPost = await prisma.post.create({
       data: {
         caption: caption as string,
-        images: [JSON.stringify(images)],
-        userID,
+        images: urlImage as string,
+        idImage: idImage as string,
+        userID: userID,
       },
     });
 
     return NextResponse.json({
-      data: newPost,
-      message: "success",
+      message: "Success",
       success: true,
+      data: newPost,
     });
   } catch (error: any) {
     return NextResponse.json({
@@ -133,8 +140,26 @@ export async function GET(req: NextRequest) {
         take: Number(take),
       });
 
+      const postCount = await prisma.post.count({
+        where: {
+          OR: [
+            {
+              userID: {
+                in: me?.followingIDs,
+              },
+            },
+            {
+              userID: userID,
+            },
+          ],
+        },
+      });
+
+      let nextPage = postCount > Number(take);
+
       return NextResponse.json({
         data: posts,
+        nextPage: nextPage,
         message: "success",
         success: true,
       });
@@ -167,105 +192,6 @@ export async function GET(req: NextRequest) {
       data: post,
       message: "success",
       success: true,
-    });
-  } catch (error: any) {
-    return NextResponse.json({
-      message: error.message,
-      success: false,
-    });
-  }
-}
-
-export async function DELETE(req: NextRequest) {
-  const auth: any = await getServerSession();
-
-  if (!auth) {
-    return NextResponse.json({
-      message: "Unauthorized",
-      success: false,
-    });
-  }
-
-  const me: any = await prisma.user.findUnique({
-    where: {
-      email: auth.user.email,
-    },
-  });
-
-  const userID = me.id;
-  try {
-    const postId = req.nextUrl.searchParams.get("post_id");
-    if (!postId) {
-      return NextResponse.json({
-        message: "Post id is required",
-        success: false,
-      });
-    }
-    const post: any = await prisma.post.findUnique({
-      where: {
-        id: postId!,
-      },
-    });
-
-    if (!post) {
-      return NextResponse.json({
-        message: "Post not found",
-        success: false,
-      });
-    }
-
-    if (post.userID !== userID) {
-      return NextResponse.json({
-        message: "Unauthorized",
-        success: false,
-      });
-    }
-
-    let images = JSON.parse(post.images);
-
-    let public_id = [];
-
-    for (let i = 0; i < images.length; i++) {
-      public_id.push(images[i].public_id);
-    }
-
-    let res;
-
-    if (public_id.length > 1) {
-      res = await cloudinary.api.delete_resources(public_id);
-      if (res.success === false) {
-        return NextResponse.json({
-          message: "cloudinary error",
-          success: false,
-        });
-      }
-    } else {
-      res = await cloudinary.uploader.destroy(public_id[0]);
-      if (res.success === false) {
-        return NextResponse.json({
-          message: "cloudinary error",
-          success: false,
-        });
-      }
-    }
-
-    // delete comments
-    await prisma.comment.deleteMany({
-      where: {
-        postID: postId!,
-      },
-    });
-
-    await prisma.post.delete({
-      where: {
-        id: postId!,
-      },
-    });
-
-    return NextResponse.json({
-      message: "Posts deleted successfully",
-      success: true,
-      res,
     });
   } catch (error: any) {
     return NextResponse.json({
