@@ -152,7 +152,7 @@ const Profile = ({ username }: { username: string }) => {
           </div>
         </div>
       </div>
-      <Media />
+      <Media userId={data?.data?.id} />
     </div>
   );
 };
