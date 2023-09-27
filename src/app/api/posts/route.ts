@@ -16,13 +16,13 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  const me: any = await prisma.user.findUnique({
+  const me: any = await prisma.user.findMany({
     where: {
       email: auth.user.email,
     },
   });
 
-  const userID = me.id;
+  const userID = me[0].id;
 
   try {
     const formData = await req.formData();

@@ -70,7 +70,7 @@ const Comments = ({ postId, count }: { postId: string; count: any }) => {
         <div className="flex gap-3 text-sm">
           <Likes postId={postId} />
           <span className="flex gap-1 items-center">
-            <BsChat /> <span>{count.comments} comments</span>
+            <BsChat /> <span>{data.data.length} comments</span>
           </span>
         </div>
         <div className="w-full mt-2 flex justify-between text-sm">

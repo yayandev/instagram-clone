@@ -14,7 +14,7 @@ const Likes = ({ postId }: { postId: string }) => {
   const [isLike, setIsLike] = useState(false);
   const [isDislike, setIsDislike] = useState(false);
   const { data, error, isLoading, mutate } = useSWR(
-    `/api/posts/count?post_id=${postId}`,
+    `/api/count/${postId}`,
     fetcher
   );
 

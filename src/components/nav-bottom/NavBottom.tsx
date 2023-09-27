@@ -36,11 +36,11 @@ const NavBottom = () => {
         <FaFileVideo />
       </Link>
       <Link
-        href={`/u/${user.username}`}
+        href={`/u/${user?.username}`}
         className="flex gap-3 items-center justify-center lg:justify-start text-xl lg:text-lg  p-2 rounded-sm hover:bg-slate-200"
       >
         <Image
-          src={`${user.image}`}
+          src={user?.image}
           width={32}
           height={32}
           alt="profile"

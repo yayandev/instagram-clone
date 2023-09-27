@@ -60,11 +60,11 @@ const SuggestionList = () => {
                     key={index}
                   >
                     <Link
-                      href={`/u/${user.username}`}
+                      href={`/u/${user?.username}`}
                       className="flex items-center gap-3 "
                     >
                       <Image
-                        src={user.image}
+                        src={user?.image}
                         width={50}
                         height={50}
                         alt="Profile"
@@ -72,15 +72,15 @@ const SuggestionList = () => {
                       />
                       <div>
                         <h1 className="text-sm font-semibold flex items-center gap-1">
-                          <span>{user.username}</span>
+                          <span>{user?.username}</span>
                           {user.isVerify && <Verify />}
                         </h1>
-                        <p className="text-xs">{user.name}</p>
+                        <p className="text-xs">{user?.name}</p>
                       </div>
                     </Link>
                     <div className="">
                       <button
-                        onClick={() => handleFollow(user.id)}
+                        onClick={() => handleFollow(user?.id)}
                         disabled={isFollow}
                         className="disabled:opacity-50 text-sm text-blue-400 font-semibold"
                       >
