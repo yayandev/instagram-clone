@@ -22,10 +22,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   } else {
     const title = res.data.data.caption;
     const username = res.data.data.user.username;
+    const images = res.data.data.images;
     return {
       title: username + " | " + title,
       openGraph: {
-        images: [{ url: res.data.data.images }],
+        images: [{ url: images }],
       },
     };
   }
