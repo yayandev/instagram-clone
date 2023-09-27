@@ -119,6 +119,7 @@ export async function GET(req: NextRequest) {
           images: true,
           userID: true,
           _count: true,
+          createdAt: true,
           user: {
             select: {
               id: true,

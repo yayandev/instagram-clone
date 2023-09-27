@@ -27,6 +27,7 @@ import Skeleton from "./Skeleton";
 import { useAuth } from "@/context/AuthContext";
 import { LikePost } from "@/hooks/LikePost";
 import { Dislike } from "@/hooks/Dislike";
+import { formatRelativeTime } from "@/helpers/formatRelativeTime";
 const settings: Settings = {
   dots: true,
   infinite: true,
@@ -90,6 +91,9 @@ const PostsList = () => {
           post.likes.map((like: any) => {
             likes.push(like.userID);
           });
+
+          let date = new Date(post.createdAt);
+
           return (
             <div className="w-full my-2" key={index}>
               {/* header post */}
@@ -114,7 +118,7 @@ const PostsList = () => {
                     </Link>{" "}
                     <BsDot />{" "}
                     <span className="font-semibold text-sm text-slate-400">
-                      2d
+                      {formatRelativeTime(date)}
                     </span>
                   </h3>
                 </div>

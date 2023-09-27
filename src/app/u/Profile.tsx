@@ -14,6 +14,7 @@ import { useModalSettings } from "@/context/ModalSettingsContext";
 import Verify from "@/components/verify/Verify";
 import ClientOnly from "@/components/layout/ClientOnly";
 import { useAuth } from "@/context/AuthContext";
+import PublicOnly from "@/components/layout/PublicOnly";
 
 const Profile = ({ username }: { username: string }) => {
   const { user, status }: any = useAuth();
@@ -129,6 +130,16 @@ const Profile = ({ username }: { username: string }) => {
             <ClientOnly>
               {data?.data?.id !== user?.id && <SectionOption />}
             </ClientOnly>
+            <PublicOnly>
+              <div className="w-full my-2">
+                <Link
+                  href={`/login?callbackUrl=${url}`}
+                  className="disabled:opacity-70 px-5 py-1 bg-sky-500 text-white text-sm rounded"
+                >
+                  follow
+                </Link>
+              </div>
+            </PublicOnly>
           </div>
           <div className="flex items-center gap-3 my-3">
             <Link href={"#"} className="font-semibold">

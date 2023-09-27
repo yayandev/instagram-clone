@@ -7,6 +7,7 @@ import Spinner from "@/components/spinner/Spinner";
 import Verify from "@/components/verify/Verify";
 import { useAuth } from "@/context/AuthContext";
 import { useModalPostOptions } from "@/context/ModalPostOptionsContext";
+import { formatRelativeTime } from "@/helpers/formatRelativeTime";
 import { Dislike } from "@/hooks/Dislike";
 import { LikePost } from "@/hooks/LikePost";
 import { fetcher } from "@/utils/swr/fetcher";
@@ -71,12 +72,13 @@ const MyPosts = ({ userId }: { userId: string }) => {
   };
 
   return (
-    <div className="w-full flex flex-col gap-3">
+    <div className="w-full flex flex-col gap-3 max-w-xl mx-auto">
       {data?.data?.map((post: any) => {
         let likes: any = [];
         post.likes.map((like: any) => {
           likes.push(like.userID);
         });
+        let date = new Date(post.createdAt);
         return (
           <div key={post.id} className="w-full">
             {/* head */}
@@ -101,7 +103,7 @@ const MyPosts = ({ userId }: { userId: string }) => {
                   </Link>{" "}
                   <BsDot />{" "}
                   <span className="font-semibold text-sm text-slate-400">
-                    2d
+                    {formatRelativeTime(date)}
                   </span>
                 </h3>
               </div>

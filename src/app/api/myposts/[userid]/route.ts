@@ -18,6 +18,7 @@ export async function GET(
         images: true,
         userID: true,
         _count: true,
+        createdAt: true,
         user: {
           select: {
             id: true,
