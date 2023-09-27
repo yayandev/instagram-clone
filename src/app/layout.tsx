@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     description: "Instagram Clone by Yayan Faturrohman",
     images: [
       {
-        url: "/favicon-32x32.png",
+        url: "/logo-nobg.png",
       },
     ],
   },
