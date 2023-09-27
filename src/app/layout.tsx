@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "id_ID",
-    url: "https://www.instagram.com/",
+    url: "https://instagram-clone-by-yayan.vercel.app",
     title: "Instagram Clone",
     description: "Instagram Clone by Yayan Faturrohman",
     images: [
