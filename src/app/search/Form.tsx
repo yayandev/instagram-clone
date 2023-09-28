@@ -39,6 +39,7 @@ const Form = () => {
         className="w-full flex justify-between items-center my-3 border-2 rounded px-3"
       >
         <input
+          autoFocus
           type="text"
           required
           value={search}

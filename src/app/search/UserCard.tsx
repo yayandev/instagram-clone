@@ -32,7 +32,7 @@ const UserCard = ({ data }: any) => {
   return (
     <div className="w-full">
       <div className="p-3 w-full flex gap-3">
-        <Link href={`/u/${data?.id}`}>
+        <Link href={`/u/${data?.username}`}>
           <Image
             src={data?.image}
             alt="data profile"
@@ -42,7 +42,7 @@ const UserCard = ({ data }: any) => {
           />
         </Link>
         <div className="flex flex-col gap-1 items-start">
-          <Link href={`/u/${data?.id}`}>
+          <Link href={`/u/${data?.username}`}>
             <h1 className="font-semibold flex gap-1 items-center">
               <span>{data?.username}</span> {data?.isVerify && <Verify />}
             </h1>
@@ -70,7 +70,7 @@ const UserCard = ({ data }: any) => {
             </div>
           ) : (
             <Link
-              href={`/u/${data?.id}`}
+              href={`/u/${data?.username}`}
               className="px-3 text-sm text-white py-1 rounded bg-sky-500"
             >
               Profile

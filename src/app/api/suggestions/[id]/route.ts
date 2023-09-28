@@ -14,6 +14,7 @@ export async function GET(
         name: true,
         image: true,
         isVerify: true,
+        followedByIDs: true,
       },
       where: {
         id: {
