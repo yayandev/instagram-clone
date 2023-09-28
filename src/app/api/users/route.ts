@@ -48,6 +48,7 @@ export async function GET(req: NextRequest) {
           username: true,
           bio: true,
           isVerify: true,
+          followedByIDs: true,
           email: true,
           _count: true,
           createdAt: true,

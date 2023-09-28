@@ -13,4 +13,5 @@ export default withAuth(mainMiddleware, [
   "/accounts/edit",
   "/accounts/username/change",
   "/accounts/password/change",
+  "/search",
 ]);

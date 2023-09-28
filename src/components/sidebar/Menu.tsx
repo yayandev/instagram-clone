@@ -42,7 +42,7 @@ const Menu = () => {
         <FaHouse /> <span className="lg:block hidden">Home</span>
       </Link>
       <Link
-        href={"#"}
+        href={"/search"}
         className="flex gap-3 items-center justify-center lg:justify-start text-xl lg:text-lg  p-2 rounded-sm hover:bg-slate-200"
       >
         <FaSistrix /> <span className="lg:block hidden">Search</span>

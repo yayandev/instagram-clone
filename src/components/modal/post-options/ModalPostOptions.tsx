@@ -3,28 +3,45 @@ import Spinner from "@/components/spinner/Spinner";
 import { useAuth } from "@/context/AuthContext";
 import { useModalPostOptions } from "@/context/ModalPostOptionsContext";
 import { DeletePost } from "@/hooks/DeletePost";
+import { Follow } from "@/hooks/Follow";
 import { unFollow } from "@/hooks/unFollow";
+import { fetcher } from "@/utils/swr/fetcher";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import useSWR from "swr";
 
 const ModalPostOptions = () => {
   const { isOpen, setIsOpen, postId, author }: any = useModalPostOptions();
+  const { data, error, isLoading } = useSWR(
+    `/api/users?id=${author?.id}`,
+    fetcher
+  );
   const { user }: any = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isProccess, setisProccess] = useState(false);
   const [msg, setMsg] = useState("");
   const [notif, setNotif] = useState("");
   const [isDeleted, setIsDeleted] = useState(false);
 
   const router = useRouter();
   const handleUnFollow = async () => {
-    setIsLoading(true);
+    setisProccess(true);
     const data = await unFollow(author?.id);
     if (data.success) {
       router.refresh();
     }
     setIsOpen(false);
-    setIsLoading(false);
+    setisProccess(false);
+  };
+
+  const handleFollow = async () => {
+    setisProccess(true);
+    const data = await Follow(author?.id);
+    if (data.success) {
+      router.refresh();
+    }
+    setIsOpen(false);
+    setisProccess(false);
   };
 
   const handleDeletePost = async () => {
@@ -55,26 +72,44 @@ const ModalPostOptions = () => {
       <div className="bg-white w-[300px] rounded shadow flex flex-col">
         {msg && <p className={"text-center font-semibold " + notif}>{msg}</p>}
         <button className="border-b-2 text-red-500 p-2 text-sm">Report</button>
-        {user.id !== author?.id && (
-          <div className="w-full flex justify-center border-b-2">
-            <button
-              disabled={isLoading}
-              onClick={handleUnFollow}
-              className=" text-red-500 p-2 text-sm"
-            >
-              {isLoading ? <Spinner /> : "Unfollow"}
-            </button>
-          </div>
-        )}
-        {user.id === author?.id && (
+        {isLoading ? (
           <div className="w-full flex justify-center">
-            <button
-              disabled={isDeleted}
-              onClick={handleDeletePost}
-              className=" text-red-500 p-2 text-sm"
-            >
-              {isDeleted ? <Spinner /> : "Delete post"}
-            </button>
+            <Spinner />
+          </div>
+        ) : (
+          <div className="w-full">
+            {user.id !== author?.id && (
+              <div className="w-full flex justify-center border-b-2">
+                {data?.data?.followedByIDs.includes(user.id) ? (
+                  <button
+                    disabled={isProccess}
+                    onClick={handleUnFollow}
+                    className=" text-red-500 p-2 text-sm"
+                  >
+                    {isProccess ? <Spinner /> : "Unfollow"}
+                  </button>
+                ) : (
+                  <button
+                    disabled={isProccess}
+                    onClick={handleFollow}
+                    className=" text-sky-500 p-2 text-sm"
+                  >
+                    {isProccess ? <Spinner /> : "Follow"}
+                  </button>
+                )}
+              </div>
+            )}
+            {user.id === author?.id && (
+              <div className="w-full flex justify-center">
+                <button
+                  disabled={isDeleted}
+                  onClick={handleDeletePost}
+                  className=" text-red-500 p-2 text-sm"
+                >
+                  {isDeleted ? <Spinner /> : "Delete post"}
+                </button>
+              </div>
+            )}
           </div>
         )}
         <button className="border-b-2 p-2 text-sm">Add to favorites</button>
