@@ -54,19 +54,19 @@ const Menu = () => {
         <FaRegCompass /> <span className="lg:block hidden">Explore</span>
       </Link>
       <Link
-        href={"#"}
+        href={"/reels"}
         className="flex gap-3 items-center justify-center lg:justify-start text-xl lg:text-lg  p-2 rounded-sm hover:bg-slate-200"
       >
         <FaFileVideo /> <span className="lg:block hidden">Reels</span>
       </Link>
       <Link
-        href={"#"}
+        href={"/messages"}
         className="flex gap-3 items-center justify-center lg:justify-start text-xl lg:text-lg  p-2 rounded-sm hover:bg-slate-200"
       >
         <FaRegMessage /> <span className="lg:block hidden">Messages</span>
       </Link>
       <Link
-        href={"#"}
+        href={"/notifications"}
         className="flex gap-3 items-center justify-center lg:justify-start text-xl lg:text-lg  p-2 rounded-sm hover:bg-slate-200"
       >
         <FaRegHeart /> <span className="lg:block hidden">Notifications</span>

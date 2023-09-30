@@ -97,6 +97,7 @@ export async function GET(req: NextRequest) {
       });
 
       const take = req.nextUrl.searchParams.get("take") || 5;
+      const skip = req.nextUrl.searchParams.get("skip") || 0;
 
       const userID = me.id;
 
@@ -138,6 +139,7 @@ export async function GET(req: NextRequest) {
         orderBy: {
           createdAt: "desc",
         },
+        skip: Number(skip),
         take: Number(take),
       });
 
@@ -156,7 +158,7 @@ export async function GET(req: NextRequest) {
         },
       });
 
-      let nextPage = postCount > Number(take);
+      let nextPage = postCount > Number(take) + Number(skip) ? true : false;
 
       return NextResponse.json({
         data: posts,

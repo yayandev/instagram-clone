@@ -30,7 +30,7 @@ const NavBottom = () => {
         <BsPlusSquare />
       </button>
       <Link
-        href={"#"}
+        href={"/reels"}
         className="flex gap-3 items-center justify-center lg:justify-start text-xl lg:text-lg font-semibold p-2 rounded-sm hover:bg-slate-200"
       >
         <FaFileVideo />

@@ -22,13 +22,13 @@ const NavTop = () => {
         <ClientOnly>
           <div className="flex gap-3">
             <Link
-              href={"#"}
+              href={"/notifications"}
               className="flex gap-3 items-center justify-center lg:justify-start text-xl lg:text-lg  p-2 rounded-sm hover:bg-slate-200"
             >
               <FaRegHeart />
             </Link>
             <Link
-              href={"#"}
+              href={"/messages"}
               className="flex gap-3 items-center justify-center lg:justify-start text-xl lg:text-lg  p-2 rounded-sm hover:bg-slate-200"
             >
               <FaRegMessage />

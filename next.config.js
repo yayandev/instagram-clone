@@ -6,9 +6,6 @@ const nextConfig = {
     register: true,
     skipWaiting: true,
   }),
-  experimental: {
-    forceSwcTransforms: true,
-  },
   env: {
     DATABASE_URL: process.env.DATABASE_URL,
     DOMAIN: process.env.DOMAIN,
