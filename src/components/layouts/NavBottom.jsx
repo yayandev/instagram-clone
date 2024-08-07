@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import React from "react";
 import { FaHome, FaRegPlusSquare, FaSearch } from "react-icons/fa";
@@ -38,7 +39,7 @@ const NavBottom = () => {
           <span className="text-2xl">{menu.icon}</span>
         </Link>
       ))}
-      <Link href={"/profile"} className="flex flex-col items-center gap-1">
+      <Link href={"/u/username"} className="flex flex-col items-center gap-1">
         <img src="/user.jpg" className="w-8 h-8 rounded-full" alt="" />
       </Link>
     </nav>

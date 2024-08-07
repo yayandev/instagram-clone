@@ -41,7 +41,7 @@ export default function RootLayout({ children }) {
         <main className="md:flex">
           <Sidebar />
           <NavTop />
-          <div className="flex-1">{children}</div>
+          <div className="w-full max-w-7xl mx-auto p-5 md:p-10">{children}</div>
           <NavBottom />
         </main>
       </body>
